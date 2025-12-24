@@ -134,6 +134,13 @@ body {
 }
 .icon-btn:hover { background: rgba(255,255,255,0.04); }
 
+.mode-btn { border-color: var(--primary-600); }
+.mode-btn.active {
+  background: var(--primary-600);
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(99,102,241,0.35);
+}
+
 .chat {
   position: relative;
   background: var(--panel);

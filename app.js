@@ -6,6 +6,7 @@
     composer: document.getElementById('composer'),
     input: document.getElementById('message'),
     send: document.getElementById('send'),
+    modeToggle: document.getElementById('modeToggle'),
     themeToggle: document.getElementById('themeToggle'),
     clearChat: document.getElementById('clearChat'),
     html: document.documentElement,
@@ -14,11 +15,13 @@
   const STORAGE_KEYS = {
     THEME: 'standalone-chat-theme',
     MESSAGES: 'standalone-chat-messages',
+    MODE: 'standalone-chat-mode',
   };
 
   const state = {
     messages: [], // { id, role: 'user'|'assistant', text, ts }
     busy: false,
+    mode: 'normal',
   };
 
   // Utils
@@ -37,6 +40,15 @@
       return Array.isArray(parsed) ? parsed : [];
     } catch {
       return [];
+    }
+  }
+
+  function loadMode() {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEYS.MODE);
+      return saved === 'defence' ? 'defence' : 'normal';
+    } catch {
+      return 'normal';
     }
   }
 
@@ -72,6 +84,19 @@
 
   function scrollToBottom() {
     els.chat.scrollTo({ top: els.chat.scrollHeight, behavior: 'smooth' });
+  }
+
+  function updateModeUI() {
+    const active = state.mode === 'defence';
+    els.modeToggle.classList.toggle('active', active);
+    els.modeToggle.setAttribute('aria-pressed', active ? 'true' : 'false');
+    els.modeToggle.title = active ? 'Defence mode: on' : 'Defence mode: off';
+  }
+
+  function setMode(mode) {
+    state.mode = mode === 'defence' ? 'defence' : 'normal';
+    try { localStorage.setItem(STORAGE_KEYS.MODE, state.mode); } catch {}
+    updateModeUI();
   }
 
   function messageTemplate(msg) {
@@ -119,9 +144,11 @@
   function replyFor(text) {
     const trimmed = text.trim();
     if (!trimmed) return "I didn't catch that. Could you rephrase?";
-    if (/hello|hi|hey/i.test(trimmed)) return 'Hello! How can I help you today?';
-    if (/time/i.test(trimmed)) return `The current time is ${fmtTime(new Date())}.`;
-    if (/help|support/i.test(trimmed)) return 'Sure — tell me what you need help with.';
+    const defensive = state.mode === 'defence';
+    if (/hello|hi|hey/i.test(trimmed)) return defensive ? 'Defence mode is on. Hi—staying brief.' : 'Hello! How can I help you today?';
+    if (/time/i.test(trimmed)) return defensive ? 'Defence mode: sharing just the time—' + fmtTime(new Date()) : `The current time is ${fmtTime(new Date())}.`;
+    if (/help|support/i.test(trimmed)) return defensive ? 'Defence mode active. Tell me exactly what you need help with.' : 'Sure — tell me what you need help with.';
+    if (defensive) return `Defence mode: noted. You said "${trimmed}".`;
     return `You said: "${trimmed}"`;
   }
 
@@ -183,6 +210,12 @@
 
   els.themeToggle.addEventListener('click', toggleTheme);
 
+  els.modeToggle.addEventListener('click', () => {
+    const next = state.mode === 'defence' ? 'normal' : 'defence';
+    setMode(next);
+    addMessage('assistant', next === 'defence' ? 'Defence mode activated. Responses will stay concise and cautious.' : 'Defence mode deactivated. Resuming normal responses.');
+  });
+
   els.clearChat.addEventListener('click', () => {
     if (!confirm('Clear the conversation?')) return;
     state.messages = [];
@@ -194,6 +227,8 @@
   // Init
   initTheme();
   state.messages = loadMessages();
+  state.mode = loadMode();
+  updateModeUI();
   if (state.messages.length === 0) {
     addMessage('assistant', 'Hi! I\'m your assistant. Ask me anything.');
   } else {
