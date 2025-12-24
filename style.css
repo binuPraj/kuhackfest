@@ -1,3 +1,4 @@
+/* first attempt */
 :root {
   --bg: #0b0f14;
   --panel: #10161d;
@@ -53,6 +54,8 @@ html[data-theme="light"]:root {
 
 * {
   box-sizing: border-box;
+   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 html, body {
@@ -159,16 +162,34 @@ body {
   font-size: 16px;
 }
 
-.msg__bubble {
+/* .msg__bubble {
   display: inline-block;
   max-width: 100%;
   padding: 10px 12px;
-  border-radius: 14px;
+  border-radius: 0;
   border: 1px solid var(--border);
   color: var(--text);
   background: var(--bubble-bot);
   white-space: pre-wrap;
   word-wrap: break-word;
+} */
+ .msg__bubble {
+  display: inline-block;
+  padding: 14px 18px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  color: var(--text);
+  background: var(--bubble-bot);
+  line-height: 1.5;
+  font-size: 15px;
+  font-weight: 400;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+  max-width: 100%;
 }
 
 .msg--user { grid-template-columns: 1fr 34px; }
@@ -200,7 +221,7 @@ body {
   padding: 8px 10px;
   background: var(--bubble-bot);
   border: 1px solid var(--border);
-  border-radius: 14px;
+  border-radius: 0;
 }
 .typing__bubble span {
   width: 6px; height: 6px; border-radius: 50%; background: var(--muted); opacity: 0.4;
