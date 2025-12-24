@@ -228,6 +228,82 @@
   margin-bottom: 16px;
 }
 
+/* ===== COLLAPSIBLE TOULMIN TOGGLE ===== */
+.reasoning-toulmin-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  border: 1px solid #bae6fd;
+  border-radius: 10px;
+  padding: 10px 14px;
+  margin-bottom: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.reasoning-toulmin-toggle:hover {
+  background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+  border-color: #7dd3fc;
+}
+
+.reasoning-toulmin-toggle-text {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #0369a1;
+}
+
+.reasoning-toulmin-toggle-icon {
+  font-size: 14px;
+  transition: transform 0.3s ease;
+}
+
+.reasoning-toulmin-toggle.expanded .reasoning-toulmin-toggle-icon {
+  transform: rotate(180deg);
+}
+
+.reasoning-toulmin-toggle-arrow {
+  font-size: 12px;
+  color: #0369a1;
+  transition: transform 0.3s ease;
+}
+
+.reasoning-toulmin-toggle.expanded .reasoning-toulmin-toggle-arrow {
+  transform: rotate(180deg);
+}
+
+/* Collapsible content wrapper */
+.reasoning-toulmin-collapsible {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease-out, opacity 0.3s ease-out, padding 0.3s ease;
+  opacity: 0;
+  padding: 0 14px;
+  background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  border: 1px solid transparent;
+  border-radius: 0 0 10px 10px;
+  margin-top: -16px;
+  margin-bottom: 16px;
+}
+
+.reasoning-toulmin-collapsible.expanded {
+  max-height: 600px; /* Enough to show all content */
+  opacity: 1;
+  padding: 14px;
+  border-color: #bae6fd;
+  border-top: none;
+}
+
+/* Adjust toggle border radius when expanded */
+.reasoning-toulmin-toggle.expanded {
+  border-radius: 10px 10px 0 0;
+  margin-bottom: 0;
+}
+
 .reasoning-toulmin-header {
   display: flex;
   align-items: center;
@@ -394,6 +470,20 @@
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
+/* Compact fallacy item - single line, less padding */
+.reasoning-issue-compact {
+  padding: 8px 12px;
+  margin-bottom: 6px;
+}
+
+.reasoning-issue-compact .reasoning-issue-header {
+  margin-bottom: 0;
+}
+
+.reasoning-icon-small {
+  font-size: 14px;
+}
+
 .reasoning-issue:hover {
   transform: translateX(2px);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
@@ -488,8 +578,10 @@
 /* ===== SUGGESTIONS ===== */
 .reasoning-suggestions {
   margin-top: 16px;
-  padding-top: 16px;
-  border-top: 1px solid var(--reasoning-border);
+  padding: 16px;
+  background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+  border: 1px solid #86efac;
+  border-radius: 10px;
 }
 
 .reasoning-suggestions-title {
@@ -503,16 +595,18 @@
 }
 
 .reasoning-suggestion-item {
-  background: #f9fafb;
-  padding: 12px;
-  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 14px;
+  border-radius: 10px;
   margin-bottom: 10px;
-  border: 1px solid var(--reasoning-border);
-  transition: border-color 0.2s;
+  border: 1px solid #a7f3d0;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 4px rgba(16, 185, 129, 0.1);
 }
 
 .reasoning-suggestion-item:hover {
-  border-color: var(--reasoning-primary);
+  border-color: #10b981;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);
 }
 
 .reasoning-suggestion-item:last-child {
@@ -520,14 +614,16 @@
 }
 
 .reasoning-suggestion-text {
-  color: #374151;
-  font-size: 13px;
-  line-height: 1.6;
-  margin-bottom: 10px;
-  padding: 10px;
-  background: white;
-  border-radius: 6px;
-  border: 1px dashed #d1d5db;
+  color: #1f2937;
+  font-size: 14px;
+  line-height: 1.7;
+  margin-bottom: 12px;
+  padding: 14px;
+  background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+  border-radius: 8px;
+  border: 1px solid #a7f3d0;
+  font-weight: 500;
+  box-shadow: inset 0 1px 2px rgba(16, 185, 129, 0.1);
 }
 
 .reasoning-suggestion-rationale {
@@ -552,6 +648,86 @@
   background: #f9fafb;
   border-radius: 8px;
   border-left: 3px solid var(--reasoning-info);
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--reasoning-text-muted);
+}
+
+/* ===== COLLAPSIBLE FEEDBACK TOGGLE ===== */
+.reasoning-feedback-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-left: 3px solid var(--reasoning-info);
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-top: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.reasoning-feedback-toggle:hover {
+  background: #f3f4f6;
+  border-color: #d1d5db;
+}
+
+.reasoning-feedback-toggle-text {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--reasoning-info);
+}
+
+.reasoning-feedback-toggle-icon {
+  font-size: 14px;
+}
+
+.reasoning-feedback-toggle-arrow {
+  font-size: 12px;
+  color: var(--reasoning-info);
+  transition: transform 0.3s ease;
+}
+
+.reasoning-feedback-toggle.expanded .reasoning-feedback-toggle-arrow {
+  transform: rotate(180deg);
+}
+
+/* Collapsible feedback content wrapper */
+.reasoning-feedback-collapsible {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease-out, opacity 0.3s ease-out, padding 0.3s ease, margin 0.3s ease;
+  opacity: 0;
+  padding: 0 12px;
+  margin: 0;
+  background: #f9fafb;
+  border: 1px solid transparent;
+  border-left: 3px solid transparent;
+  border-radius: 0 0 8px 8px;
+}
+
+.reasoning-feedback-collapsible.expanded {
+  max-height: 300px; /* Enough to show feedback content */
+  opacity: 1;
+  padding: 12px;
+  margin-top: -1px;
+  border-color: #e5e7eb;
+  border-left-color: var(--reasoning-info);
+  border-top: none;
+}
+
+/* Adjust toggle border radius when expanded */
+.reasoning-feedback-toggle.expanded {
+  border-radius: 8px 8px 0 0;
+  margin-bottom: 0;
+}
+
+.reasoning-feedback-content {
   font-size: 13px;
   line-height: 1.6;
   color: var(--reasoning-text-muted);
@@ -584,6 +760,14 @@
   background: var(--reasoning-success);
   color: white;
   flex: 1;
+}
+
+/* Smaller variant for single-button layouts */
+.reasoning-btn-accept.reasoning-btn-small {
+  padding: 6px 12px;
+  font-size: 11px;
+  flex: none;
+  min-width: 80px;
 }
 
 .reasoning-btn-accept:hover {

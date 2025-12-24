@@ -233,6 +233,456 @@
             "improved_statement": "Considering standard nutritional definitions, egg yolks are not a *high* source of protein, containing approximately 3 grams per large yolk.",
             "logical_consistency_score": 90
           }
+        },
+        {
+          "argument_id": "arg_1766591514952",
+          "raw_text": "While egg yolks do contain some protein, their protein content is relatively low when compared to egg whites or other protein-rich foods",
+          "mode_used": "support",
+          "timestamp": "2025-12-24T15:51:54.952Z",
+          "response": {
+            "clarity_score": 95,
+            "elements": {
+              "backing": {
+                "strength": 6,
+                "text": "Nutritional science generally defines 'significant' protein sources based on grams of protein per calorie or serving size, relative to dietary needs."
+              },
+              "claim": {
+                "strength": 7,
+                "text": "Egg yolks are not a significant source of protein."
+              },
+              "data": {
+                "strength": 9,
+                "text": "Egg yolks contain some protein, but their protein content is relatively low compared to egg whites and other protein-rich foods."
+              },
+              "qualifier": {
+                "strength": 7,
+                "text": "relatively"
+              },
+              "rebuttal": {
+                "strength": 5,
+                "text": "This doesn't preclude egg yolks from contributing to overall protein intake, especially when consumed as part of a whole egg."
+              },
+              "warrant": {
+                "strength": 8,
+                "text": "Foods are considered significant protein sources if their protein content is comparatively high."
+              }
+            },
+            "fallacies_present": [],
+            "fallacy_resistance_score": 85,
+            "feedback": "The argument is generally sound and relies on a comparative assessment. The qualifier 'relatively' is important, acknowledging yolks *do* have protein. The rebuttal anticipates a common counterpoint. The original statement is slightly vague; specifying 'protein content per calorie' improves precision. The argument is strong in its resistance to fallacies due to its reliance on comparative data rather than absolute statements.",
+            "improved_statement": "Considering protein content per calorie, egg yolks are a less concentrated protein source than egg whites or foods like lean meats and legumes.",
+            "logical_consistency_score": 90
+          }
+        },
+        {
+          "argument_id": "arg_1766596874295",
+          "raw_text": "While egg yolks do contain some protein, their protein content is relatively low when compared to egg whites or other protein-rich foods",
+          "mode_used": "support",
+          "timestamp": "2025-12-24T17:21:14.295Z",
+          "response": {
+            "clarity_score": 85,
+            "elements": {
+              "backing": {
+                "strength": 6,
+                "text": "Generally accepted nutritional guidelines define 'high protein' relative to other food components and common dietary needs."
+              },
+              "claim": {
+                "strength": 7,
+                "text": "Egg yolks are not a significant source of protein."
+              },
+              "data": {
+                "strength": 9,
+                "text": "Egg yolks contain some protein, but their protein content is relatively low compared to egg whites and other protein-rich foods."
+              },
+              "qualifier": {
+                "strength": 7,
+                "text": "relatively"
+              },
+              "rebuttal": {
+                "strength": 5,
+                "text": "This doesn't preclude egg yolks from contributing to overall protein intake, just that they aren't *primarily* consumed for that purpose."
+              },
+              "warrant": {
+                "strength": 8,
+                "text": "Foods are considered significant protein sources if their protein content is comparatively high."
+              }
+            },
+            "fallacies_present": [],
+            "fallacy_resistance_score": 90,
+            "feedback": "The argument is logically sound and avoids common fallacies. It relies on a comparative assessment, which is reasonable. The qualifier 'relatively' is important for accuracy. The statement could be strengthened by specifying 'per calorie' or 'per serving' to make the comparison more precise. The rebuttal acknowledges a potential counterpoint, enhancing the argument's robustness.",
+            "improved_statement": "Considering protein content per calorie, egg yolks provide a lower amount of protein than egg whites or many other common protein sources.",
+            "logical_consistency_score": 95
+          }
+        },
+        {
+          "argument_id": "arg_1766598343190",
+          "raw_text": "While egg yolks do contain some protein, their protein content is relatively low when compared to egg whites or other protein-rich foods",
+          "mode_used": "support",
+          "timestamp": "2025-12-24T17:45:43.190Z",
+          "response": {
+            "clarity_score": 95,
+            "elements": {
+              "backing": {
+                "strength": 5,
+                "text": "Nutritional science generally defines 'significant' protein sources based on grams of protein per serving and comparison to dietary recommendations."
+              },
+              "claim": {
+                "strength": 7,
+                "text": "Egg yolks are not a significant source of protein."
+              },
+              "data": {
+                "strength": 9,
+                "text": "Egg yolks contain some protein, but their protein content is relatively low compared to egg whites and other protein-rich foods."
+              },
+              "qualifier": {
+                "strength": 8,
+                "text": "Relatively"
+              },
+              "rebuttal": {
+                "strength": 4,
+                "text": "This doesn't preclude egg yolks from contributing to overall protein intake, just that they aren't *primarily* consumed for that purpose."
+              },
+              "warrant": {
+                "strength": 6,
+                "text": "Foods are considered significant protein sources if their protein content is comparable to or exceeds that of established protein-rich foods."
+              }
+            },
+            "fallacies_present": [],
+            "fallacy_resistance_score": 85,
+            "feedback": "The argument is generally sound and relies on comparative data. The warrant is implicit but reasonable. The qualifier 'relatively' is important for accuracy. The statement is clear and avoids strong, unsupported assertions. The rebuttal acknowledges a limitation without undermining the claim. Strengthening the backing with a specific reference to nutritional guidelines would further improve the argument.",
+            "improved_statement": "Compared to egg whites and common protein sources like meat and beans, egg yolks provide a relatively low amount of protein, and therefore should not be considered a primary protein source.",
+            "logical_consistency_score": 90
+          }
+        },
+        {
+          "argument_id": "arg_1766598395179",
+          "raw_text": "Yolks are not high in protein",
+          "mode_used": "support",
+          "timestamp": "2025-12-24T17:46:35.179Z",
+          "response": {
+            "clarity_score": 60,
+            "elements": {
+              "backing": {
+                "strength": 7,
+                "text": "Dietary guidelines generally recommend 50-60 grams of protein per day for an average adult.  Comparatively, many lean meats and protein supplements offer significantly more protein per serving."
+              },
+              "claim": {
+                "strength": 6,
+                "text": "Yolks are not high in protein"
+              },
+              "data": {
+                "strength": 4,
+                "text": "Implicit: Yolks contain approximately 6-7 grams of protein per large egg."
+              },
+              "qualifier": {
+                "strength": 8,
+                "text": "Generally"
+              },
+              "rebuttal": {
+                "strength": 6,
+                "text": "While yolks contain protein, the amount is not exceptionally high compared to other protein sources, and concerns about cholesterol may lead people to seek protein elsewhere."
+              },
+              "warrant": {
+                "strength": 5,
+                "text": "A food is considered 'high' in protein if it contains a substantial amount relative to typical dietary needs and other food sources."
+              }
+            },
+            "fallacies_present": [],
+            "fallacy_resistance_score": 75,
+            "feedback": "The original statement is relatively weak due to its lack of specificity. The Toulmin analysis reveals the implicit data and the subjective warrant defining 'high' protein. The argument isn't fallacious, but it benefits from acknowledging the protein content of yolks while clarifying the comparative aspect. The improved statement adds this context, strengthening the argument. Clarity is moderate as the definition of 'high' is not initially provided.",
+            "improved_statement": "While egg yolks do contain protein (around 6-7 grams per large egg), they are not considered a *high*-protein food source compared to alternatives like lean meats or protein supplements.",
+            "logical_consistency_score": 80
+          }
+        },
+        {
+          "argument_id": "arg_1766599015696",
+          "raw_text": "Yolks are not high in protein",
+          "mode_used": "support",
+          "timestamp": "2025-12-24T17:56:55.696Z",
+          "response": {
+            "clarity_score": 60,
+            "elements": {
+              "backing": {
+                "strength": 3,
+                "text": "Dietary guidelines generally recommend 50-60 grams of protein per day for an average adult. Comparing this to other protein sources, 6-7 grams per egg is not exceptionally high."
+              },
+              "claim": {
+                "strength": 6,
+                "text": "Yolks are not high in protein"
+              },
+              "data": {
+                "strength": 4,
+                "text": "Implicit: Yolks contain approximately 6-7 grams of protein per large egg."
+              },
+              "qualifier": {
+                "strength": 7,
+                "text": "Generally"
+              },
+              "rebuttal": {
+                "strength": 6,
+                "text": "This claim could be rebutted by demonstrating that the definition of 'high protein' is lower than the implicit standard used, or by comparing yolk protein content to other foods commonly considered low in protein."
+              },
+              "warrant": {
+                "strength": 5,
+                "text": "A food is considered 'high' in protein if it contains a substantial amount relative to typical dietary needs and expectations for that food type."
+              }
+            },
+            "fallacies_present": [
+              "Vagueness",
+              "Appeal to Common Belief (potentially, depending on what constitutes 'high')"
+            ],
+            "fallacy_resistance_score": 75,
+            "feedback": "The original statement is rather weak due to its reliance on an undefined term ('high'). The Toulmin analysis reveals the implicit warrant and backing needed to make the argument more robust. The improved statement clarifies the claim by using 'particularly' and providing context through comparison, making it less susceptible to misinterpretation and more logically sound. The data is implicit and would benefit from explicit mention. The fallacy resistance is moderate, as the argument isn't inherently flawed but relies on a subjective assessment without clear criteria. Clarity is also moderate, as 'high' is ambiguous.",
+            "improved_statement": "While yolks contain protein (approximately 6-7 grams per large egg), they are not a *particularly* high-protein food source compared to options like lean meats, beans, or tofu.",
+            "logical_consistency_score": 80
+          }
+        },
+        {
+          "argument_id": "arg_1766599116847",
+          "raw_text": "climate change is not real becaus ei donot feel hot",
+          "mode_used": "support",
+          "timestamp": "2025-12-24T17:58:36.847Z",
+          "response": {
+            "clarity_score": 70,
+            "elements": {
+              "backing": {
+                "strength": 0,
+                "text": "None provided; relies on an unstated assumption about the nature of climate and personal perception."
+              },
+              "claim": {
+                "strength": 2,
+                "text": "Climate change is not real."
+              },
+              "data": {
+                "strength": 1,
+                "text": "I do not feel hot."
+              },
+              "qualifier": {
+                "strength": 0,
+                "text": "None"
+              },
+              "rebuttal": {
+                "strength": 9,
+                "text": "Evidence of global temperature increases, scientific consensus, and long-term climate data."
+              },
+              "warrant": {
+                "strength": 1,
+                "text": "Personal experience is a reliable indicator of global climate patterns."
+              }
+            },
+            "fallacies_present": [
+              "Anecdotal Evidence",
+              "Hasty Generalization",
+              "False Analogy (assuming personal experience represents global climate)"
+            ],
+            "fallacy_resistance_score": 10,
+            "feedback": "This argument is extremely weak due to its reliance on anecdotal evidence and a flawed understanding of climate change. Climate change is a global phenomenon measured over decades, not based on individual temperature perception. The argument lacks backing and is easily rebutted by established scientific findings. The improved statement acknowledges personal experience while deferring to credible evidence.",
+            "improved_statement": "While I have not personally experienced significant warming, this does not negate the overwhelming scientific evidence supporting the reality of climate change, which is based on long-term global data and complex modeling.",
+            "logical_consistency_score": 5
+          }
+        },
+        {
+          "argument_id": "arg_1766599500882",
+          "raw_text": "climate change is not real becaus ei donot feel hot",
+          "mode_used": "defense",
+          "timestamp": "2025-12-24T18:05:00.882Z",
+          "response": {
+            "response": "{\"argument\": \"The assertion that climate change isn't real simply because of a personal lack of perceived warmth demonstrates a fundamental misunderstanding of the issue. Millions of people across the globe *are* experiencing increasingly severe heatwaves, droughts, and other extreme weather events directly linked to climate change. To dismiss their experiences and the overwhelming scientific consensus based on your individual sensation is not only illogical but also deeply disrespectful to those already suffering the consequences. Clearly, if *I* haven't noticed a significant change, and I'm a reasonable person, then it must not be happening on a large scale. The fact that I haven't personally felt the effects proves it's overblown.\"}"
+          }
+        },
+        {
+          "argument_id": "arg_1766604305147",
+          "raw_text": "climate change is not real becaus ei donot feel hot",
+          "mode_used": "support",
+          "timestamp": "2025-12-24T19:25:05.147Z",
+          "response": {
+            "error": "LLM failed"
+          }
+        },
+        {
+          "argument_id": "arg_1766604324893",
+          "raw_text": "My friend is an engineer and he is jobless. So, all engineers are jobless.",
+          "mode_used": "support",
+          "timestamp": "2025-12-24T19:25:24.893Z",
+          "response": {
+            "error": "LLM failed"
+          }
+        },
+        {
+          "argument_id": "arg_1766604530938",
+          "raw_text": "My friend is an engineer and he is jobless. So, all engineers are jobless.",
+          "mode_used": "support",
+          "timestamp": "2025-12-24T19:28:50.938Z",
+          "response": {
+            "error": "LLM failed"
+          }
+        },
+        {
+          "argument_id": "arg_1766604595081",
+          "raw_text": "My friend is an engineer and he is jobless. So, all engineers are jobless.",
+          "mode_used": "support",
+          "timestamp": "2025-12-24T19:29:55.081Z",
+          "response": {
+            "error": "LLM failed"
+          }
+        },
+        {
+          "argument_id": "arg_1766604728183",
+          "raw_text": "My friend is an engineer and he is jobless. So, all engineers are jobless.",
+          "mode_used": "support",
+          "timestamp": "2025-12-24T19:32:08.183Z",
+          "response": {
+            "error": "LLM failed"
+          }
+        },
+        {
+          "argument_id": "arg_1766605246354",
+          "raw_text": "My friend is an engineer and he is jobless. So, all engineers are jobless.",
+          "mode_used": "support",
+          "timestamp": "2025-12-24T19:40:46.354Z",
+          "response": {
+            "error": "LLM failed"
+          }
+        },
+        {
+          "argument_id": "arg_1766605498554",
+          "raw_text": "My friend is an engineer and he is jobless. So, all engineers are jobless.",
+          "mode_used": "support",
+          "timestamp": "2025-12-24T19:44:58.554Z",
+          "response": {
+            "error": "LLM failed"
+          }
+        },
+        {
+          "argument_id": "arg_1766605505549",
+          "raw_text": "My friend is an engineer and he is jobless. So, all engineers are jobless.",
+          "mode_used": "support",
+          "timestamp": "2025-12-24T19:45:05.549Z",
+          "response": {
+            "error": "LLM failed"
+          }
+        },
+        {
+          "argument_id": "arg_1766605679279",
+          "raw_text": "My friend is an engineer and he is jobless. So, all engineers are jobless.",
+          "mode_used": "support",
+          "timestamp": "2025-12-24T19:47:59.279Z",
+          "response": {
+            "error": "LLM failed"
+          }
+        },
+        {
+          "argument_id": "arg_1766606102821",
+          "raw_text": "My friend is an engineer and he is jobless. So, all engineers are jobless.",
+          "mode_used": "support",
+          "timestamp": "2025-12-24T19:55:02.821Z",
+          "response": {
+            "error": "LLM failed"
+          }
+        },
+        {
+          "argument_id": "arg_1766606434725",
+          "raw_text": "My friend is an engineer and he is jobless. So, all engineers are jobless.",
+          "mode_used": "support",
+          "timestamp": "2025-12-24T20:00:34.725Z",
+          "response": {
+            "error": "LLM failed"
+          }
+        },
+        {
+          "argument_id": "arg_1766606537915",
+          "raw_text": "My friend is an engineer and he is jobless. So, all engineers are jobless.",
+          "mode_used": "support",
+          "timestamp": "2025-12-24T20:02:17.915Z",
+          "response": {
+            "error": "LLM failed"
+          }
+        },
+        {
+          "argument_id": "arg_1766606780997",
+          "raw_text": "My friend is an engineer and he is jobless. So, all engineers are jobless.",
+          "mode_used": "support",
+          "timestamp": "2025-12-24T20:06:20.997Z",
+          "response": {
+            "clarity_score": 80,
+            "elements": {
+              "backing": {
+                "strength": 0,
+                "text": ""
+              },
+              "claim": {
+                "strength": 2,
+                "text": "all engineers are jobless"
+              },
+              "data": {
+                "strength": 4,
+                "text": "my friend is an engineer and he is jobless"
+              },
+              "qualifier": {
+                "strength": 0,
+                "text": ""
+              },
+              "rebuttal": {
+                "strength": 0,
+                "text": ""
+              },
+              "warrant": {
+                "strength": 1,
+                "text": "if one engineer is jobless, then all engineers are jobless"
+              }
+            },
+            "fallacies_present": [
+              "hasty generalization",
+              "lack of representative sample"
+            ],
+            "fallacy_resistance_score": 20,
+            "feedback": "the argument lacks a representative sample and makes an overly broad claim based on a single instance",
+            "improved_statement": "some engineers may be jobless, but it's not necessarily true for all engineers",
+            "logical_consistency_score": 30
+          }
+        },
+        {
+          "argument_id": "arg_1766606921678",
+          "raw_text": "My friend is an engineer and he is jobless. So, all engineers are jobless.",
+          "mode_used": "support",
+          "timestamp": "2025-12-24T20:08:41.678Z",
+          "response": {
+            "clarity_score": 80,
+            "elements": {
+              "backing": {
+                "strength": 0,
+                "text": "none provided"
+              },
+              "claim": {
+                "strength": 2,
+                "text": "all engineers are jobless"
+              },
+              "data": {
+                "strength": 4,
+                "text": "my friend is an engineer and he is jobless"
+              },
+              "qualifier": {
+                "strength": 0,
+                "text": "none provided"
+              },
+              "rebuttal": {
+                "strength": 0,
+                "text": "none provided"
+              },
+              "warrant": {
+                "strength": 1,
+                "text": "implicitly, being an engineer leads to joblessness"
+              }
+            },
+            "fallacies_present": [
+              "hasty generalization",
+              "lack of representative sample"
+            ],
+            "fallacy_resistance_score": 20,
+            "feedback": "the argument lacks sufficient evidence and relies on an isolated incident to make a broad generalization, which is a common logical fallacy",
+            "improved_statement": "my friend, who is an engineer, is currently jobless, but this does not necessarily imply that all engineers are jobless",
+            "logical_consistency_score": 30
+          }
         }
       ]
     },
@@ -1388,20 +1838,20 @@
   ],
   "insights": {
     "radar_metrics": {
-      "claim": 3.8,
-      "data": 5.3,
-      "warrant": 5.0,
-      "backing": 4.6,
-      "qualifier": 3.8,
-      "rebuttal": 6.8
+      "claim": 4.0,
+      "data": 5.4,
+      "warrant": 4.8,
+      "backing": 4.3,
+      "qualifier": 4.0,
+      "rebuttal": 6.3
     },
-    "fallacy_resistance_score": 41.0,
-    "logical_consistency_score": 53.1,
-    "clarity_score": 62.1,
+    "fallacy_resistance_score": 44.6,
+    "logical_consistency_score": 55.1,
+    "clarity_score": 65.5,
     "common_fallacies_faced": [
       {
         "type": "Hasty Generalization",
-        "count": 21
+        "count": 22
       },
       {
         "type": "Stereotyping",
@@ -1412,14 +1862,14 @@
         "count": 4
       },
       {
-        "type": "False Cause",
+        "type": "Anecdotal Evidence",
         "count": 3
       },
       {
-        "type": "Slippery Slope",
-        "count": 2
+        "type": "False Cause",
+        "count": 3
       }
     ],
-    "total_arguments_analyzed": 29
+    "total_arguments_analyzed": 37
   }
 }

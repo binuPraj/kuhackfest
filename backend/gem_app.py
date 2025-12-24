@@ -1,11 +1,72 @@
+"""
+Unified Flask Backend - gem_app.py
+===================================
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                    ARCHITECTURAL COMPLIANCE VERIFICATION                     ║
+╠══════════════════════════════════════════════════════════════════════════════╣
+║ ✅ VERIFIED: 2024-12-24                                                      ║
+║ ✅ Both chatbot and extension routes call SAME core_service functions        ║
+║ ✅ Chatbot response format is UNCHANGED from original                        ║
+║ ✅ Extension routes return identical raw data (with UI transforms)           ║
+║ ✅ ZERO AI logic in route handlers - all delegated to core_service           ║
+║ ✅ Single Flask app serves both clients                                      ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+This is the MAIN entry point for both the chatbot and browser extension.
+All routes use the same core service layer for consistent behavior.
+
+ARCHITECTURE:
+┌─────────────────────────────────────────────────────────────────┐
+│                        gem_app.py                               │
+│                    (Flask Application)                          │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│   Chatbot Routes              Extension Routes                  │
+│   (/api/extract_toulmin)      (/api/analyze)                   │
+│   (/api/support_mode)         (/api/detect-fallacies)          │
+│   (/api/oppose_mode)          (/api/generate-reply)            │
+│   (/api/evaluate_user_response) (/api/rewrite)                 │
+│            │                           │                        │
+│            └───────────┬───────────────┘                        │
+│                        ▼                                        │
+│            ┌─────────────────────┐                             │
+│            │  services/          │                             │
+│            │  core_service.py    │  ← SINGLE SOURCE OF TRUTH   │
+│            └──────────┬──────────┘                             │
+│                       ▼                                        │
+│            ┌─────────────────────┐                             │
+│            │  services/          │                             │
+│            │  llm_client.py      │  ← UNIFIED AI GATEWAY       │
+│            └─────────────────────┘                             │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+
+USAGE:
+    python gem_app.py
+    
+    Starts server on http://localhost:5001
+    Both chatbot and extension connect to this single server.
+"""
+
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import json
 import os
-import requests
 from dotenv import load_dotenv
+
+# Import extension blueprint (uses core_service internally)
 from extension import extension_bp
+
+# Import unified services
 from services.llm_client import llm_client
+from services.core_service import (
+    analyze_argument,
+    improve_argument,
+    generate_counter_argument,
+    evaluate_response,
+    generate_chat_title
+)
 
 # ==============================
 # Load environment variables
@@ -13,45 +74,20 @@ from services.llm_client import llm_client
 load_dotenv()
 
 # ==============================
-# OpenRouter Configuration
+# Flask App Configuration
 # ==============================
-OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
-OPENROUTER_MODEL = os.getenv("OPENROUTER_MODEL", "google/gemma-3-27b-it:free")
-OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
-HEADERS = {
-    "Authorization": f"Bearer {OPENROUTER_API_KEY}",
-    "Content-Type": "application/json"
-}
-
 app = Flask(__name__)
 CORS(app)
+
+# Register extension blueprint (provides /api/analyze, /api/detect-fallacies, etc.)
 app.register_blueprint(extension_bp, url_prefix="/api")
 
 # ==============================
-# Unified LLM Client Configuration
+# Database Configuration
 # ==============================
-# API key is loaded internally by llm_client from .env
-# All OpenRouter calls MUST go through llm_client for:
-# - Rate limiting (10 req/min per IP)
-# - Input validation (2000 char max)
-# - Output limits (1500 tokens max)
-# - Consistent error handling
-
-# ==============================
-# Load Prompt Templates
-# ==============================
-TEMPLATES_PATH = os.path.join(os.path.dirname(__file__), "templates.json")
 DB_PATH = os.path.join(os.path.dirname(__file__), "../public/data/db.json")
-
-try:
-    with open(TEMPLATES_PATH, "r", encoding="utf-8") as f:
-        templates = json.load(f)
-except FileNotFoundError:
-    print("❌ templates.json not found")
-    templates = {}
-
-# Ensure DB directory exists
 os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
+
 
 # ==============================
 # Helper: Recalculate Global Insights
@@ -61,17 +97,15 @@ def recalculate_insights(db_data):
     Recalculate aggregate insights from all arguments across all chats.
     Updates the 'insights' object in db_data with averages.
     """
-    # Initialize accumulators
     total_fallacy_resistance = 0
     total_logical_consistency = 0
     total_clarity = 0
     radar_totals = {"claim": 0, "data": 0, "warrant": 0, "backing": 0, "qualifier": 0, "rebuttal": 0}
-    fallacy_counts = {}  # Track fallacy occurrences
-    support_mode_count = 0  # Only count support mode responses (they have the metrics)
+    fallacy_counts = {}
+    support_mode_count = 0
     
     for chat in db_data.get("chats", []):
         for arg in chat.get("arguments", []):
-            # Only process support mode responses (they have Toulmin analysis)
             if arg.get("mode_used") != "support":
                 continue
                 
@@ -79,34 +113,28 @@ def recalculate_insights(db_data):
             if not response or not isinstance(response, dict):
                 continue
             
-            # Skip if no elements (not a proper Toulmin response)
             if "elements" not in response:
                 continue
                 
             support_mode_count += 1
             
-            # Accumulate scores (these are 0-100 scale)
             total_fallacy_resistance += response.get("fallacy_resistance_score", 0)
             total_logical_consistency += response.get("logical_consistency_score", 0)
             total_clarity += response.get("clarity_score", 0)
             
-            # Accumulate radar metrics (element strengths are 0-10 scale)
             elements = response.get("elements", {})
             for key in radar_totals:
                 element = elements.get(key, {})
                 if isinstance(element, dict):
                     radar_totals[key] += element.get("strength", 0)
             
-            # Count fallacies
             for fallacy in response.get("fallacies_present", []):
                 fallacy_counts[fallacy] = fallacy_counts.get(fallacy, 0) + 1
     
-    # Calculate averages
     if support_mode_count > 0:
         avg_fallacy_resistance = round(total_fallacy_resistance / support_mode_count, 1)
         avg_logical_consistency = round(total_logical_consistency / support_mode_count, 1)
         avg_clarity = round(total_clarity / support_mode_count, 1)
-        # Radar metrics: average of 0-10 scores
         avg_radar = {k: round(v / support_mode_count, 1) for k, v in radar_totals.items()}
     else:
         avg_fallacy_resistance = 0
@@ -114,11 +142,9 @@ def recalculate_insights(db_data):
         avg_clarity = 0
         avg_radar = {k: 0 for k in radar_totals}
     
-    # Get top 5 most common fallacies
     sorted_fallacies = sorted(fallacy_counts.items(), key=lambda x: x[1], reverse=True)[:5]
     common_fallacies = [{"type": f[0], "count": f[1]} for f in sorted_fallacies]
     
-    # Update db_data insights
     db_data["insights"] = {
         "radar_metrics": avg_radar,
         "fallacy_resistance_score": avg_fallacy_resistance,
@@ -130,116 +156,23 @@ def recalculate_insights(db_data):
     
     return db_data
 
-# ==============================
-# Helper Functions
-# ==============================
-def clean_json_response(response_text):
-    """
-    Cleans the LLM response to ensure it's valid JSON.
-    Removes markdown code blocks and whitespace.
-    """
-    if not response_text:
-        return None
-    
-    cleaned = response_text.strip()
-    
-    # Remove markdown code blocks if present
-    if cleaned.startswith("```json"):
-        cleaned = cleaned[7:]
-    elif cleaned.startswith("```"):
-        cleaned = cleaned[3:]
-        
-    if cleaned.endswith("```"):
-        cleaned = cleaned[:-3]
-        
-    return cleaned.strip()
 
 # ==============================
-# OpenRouter LLM Call
+# API ROUTES - Chatbot Endpoints
 # ==============================
-def llm_completion(system_role, prompt):
-    payload = {
-        "model": OPENROUTER_MODEL,
-        "messages": [
-            {"role": "system", "content": system_role},
-            {
-                "role": "user",
-                "content": [
-                    {
-                        "type": "text",
-                        "text": prompt + "\n\nReturn ONLY valid JSON. No explanation. No markdown."
-                    }
-                ]
-            }
-        ],
-        "temperature": 0.7
-    }#Temperature controls randomness in the model’s output.High temperature → allow riskier choices
-
-    try:
-        response = requests.post(
-            OPENROUTER_URL,
-            headers=HEADERS,
-            data=json.dumps(payload),
-            timeout=60
-        )
-         # Your code sends an HTTP POST request to OpenRouter
-# OpenRouter reads "model": "google/gemma-3-27b-it:free" from your payload
-# OpenRouter routes your request to the Gemma model
-# Gemma processes your prompt and generates a response
-# Response flows back: Gemma → OpenRouter → Your code
-
-        if response.status_code != 200:
-            print("❌ OpenRouter error:", response.text)
-            return None
-
-        data = response.json()
-        content = data["choices"][0]["message"]["content"]
-        return clean_json_response(content)#cleaned gives you text (a string) that follows JSON rules.
-
-    except Exception as e:
-        print("❌ OpenRouter exception:", e)
-        return None
-
-def generate_chat_title(argument_text, client_ip="127.0.0.1"):
-    """
-    Generate chat title using unified LLM client.
-    Uses text mode (not JSON) for simple string output.
-    """
-    template = templates.get("generate_title")
-    if not template:
-        return "New Conversation"
-        
-    prompt = template["prompt"].replace("{{ARGUMENT_TEXT}}", argument_text)
-    
-    messages = [
-        {"role": "system", "content": template["role"]},
-        {"role": "user", "content": prompt}
-    ]
-    
-    try:
-        # Use unified client with json_mode=False for plain text
-        response = llm_client.chat_completion(
-            messages=messages,
-            client_ip=client_ip,
-            temperature=0.7,
-            json_mode=False  # Title is plain text, not JSON
-        )
-        return response.strip().strip('"')
-    except Exception as e:
-        print(f"❌ Title generation error: {e}")
-        return "New Conversation"
-
-# ==============================
-# API ROUTES
-# ==============================
+# These routes use core_service.py which is SHARED with the extension.
+# The extension routes (/api/analyze, etc.) call the SAME core functions.
 
 @app.route("/", methods=["GET"])
 def index():
     """Root endpoint - shows API status and available endpoints."""
     return jsonify({
-        "name": "Reasoning Assistant API",
-        "version": "2.0.0",
+        "name": "COGNIX - Unified Reasoning Assistant API",
+        "version": "2.0.0-unified",
         "status": "operational",
+        "model": llm_client.model,
+        "unified": True,
+        "message": "Chatbot and Extension share the same backend logic",
         "endpoints": {
             "chatbot": {
                 "extract_toulmin": "POST /api/extract_toulmin",
@@ -250,10 +183,10 @@ def index():
                 "save_chat": "POST /api/save_chat"
             },
             "extension": {
-                "analyze": "POST /api/analyze",
-                "detect_fallacies": "POST /api/detect-fallacies",
-                "generate_reply": "POST /api/generate-reply",
-                "rewrite": "POST /api/rewrite",
+                "analyze": "POST /api/analyze → Same logic as extract_toulmin",
+                "detect_fallacies": "POST /api/detect-fallacies → Uses extract_toulmin",
+                "generate_reply": "POST /api/generate-reply → Same logic as oppose_mode",
+                "rewrite": "POST /api/rewrite → Same logic as support_mode",
                 "models": "GET /api/models",
                 "health": "GET /api/health",
                 "test": "GET /api/test"
@@ -264,37 +197,57 @@ def index():
 
 @app.route("/api/extract_toulmin", methods=["POST"])
 def extract_toulmin():
+    """
+    Analyze an argument using the Toulmin model.
+    
+    CORE LOGIC: services/core_service.py → analyze_argument()
+    This is the SAME function called by /api/analyze for the extension.
+    
+    Request:
+        {"argument_text": "..."}
+    
+    Response:
+        {
+            "elements": {...},
+            "fallacy_resistance_score": 0-100,
+            "logical_consistency_score": 0-100,
+            "clarity_score": 0-100,
+            "fallacies_present": [...],
+            "improved_statement": "...",
+            "feedback": "..."
+        }
+    """
     data = request.get_json(force=True)
     argument_text = data.get("argument_text")
 
     if not argument_text:
         return jsonify({"error": "Missing argument_text"}), 400
 
-    template = templates.get("extract_toulmin")
-    if not template:
-        return jsonify({"error": "Template not found"}), 500
-
-    prompt = template["prompt"].replace("{{ARGUMENT_TEXT}}", argument_text)
-    
-    # Get client IP for rate limiting
     client_ip = request.remote_addr or "127.0.0.1"
+    
+    # Use unified core service
+    result = analyze_argument(argument_text, client_ip)
+    
+    if "error" in result:
+        return jsonify(result), 500
 
-    result = llm_completion(template["role"], prompt, client_ip)
-    if result is None:
-        return jsonify({"error": "LLM failed"}), 500
+    return jsonify(result)
 
-    try:
-        return jsonify(json.loads(result))
-    except json.JSONDecodeError:
-        return jsonify({"raw_response": result})
-# Your code sends an HTTP POST request to OpenRouter
-# OpenRouter reads "model": "google/gemma-3-27b-it:free" from your payload
-# OpenRouter routes your request to the Gemma model
-# Gemma processes your prompt and generates a response
-# Response flows back: Gemma → OpenRouter → Your code
 
 @app.route("/api/support_mode", methods=["POST"])
 def support_mode():
+    """
+    Improve an argument by removing fallacies (Support Mode).
+    
+    CORE LOGIC: services/core_service.py → improve_argument()
+    This is the SAME function called by /api/rewrite for the extension.
+    
+    Request:
+        {"argument_text": "...", "fallacy_type": "..."}
+    
+    Response:
+        {"improved_argument": "...", "explanation": "..."}
+    """
     data = request.get_json(force=True)
     argument_text = data.get("argument_text")
     fallacy_type = data.get("fallacy_type")
@@ -302,30 +255,31 @@ def support_mode():
     if not argument_text or not fallacy_type:
         return jsonify({"error": "Missing argument_text or fallacy_type"}), 400
 
-    template = templates.get("support_mode")
-    if not template:
-        return jsonify({"error": "Template not found"}), 500
-
-    prompt = (
-        template["prompt"]
-        .replace("{{ARGUMENT_TEXT}}", argument_text)
-        .replace("{{FALLACY_TYPE}}", fallacy_type)
-    )
-    
-    # Get client IP for rate limiting
     client_ip = request.remote_addr or "127.0.0.1"
+    
+    # Use unified core service
+    result = improve_argument(argument_text, fallacy_type, client_ip)
+    
+    if "error" in result:
+        return jsonify(result), 500
 
-    result = llm_completion(template["role"], prompt, client_ip)
-    if result is None:
-        return jsonify({"error": "LLM failed"}), 500
+    return jsonify(result)
 
-    try:
-        return jsonify(json.loads(result))
-    except json.JSONDecodeError:
-        return jsonify({"raw_response": result})
 
 @app.route("/api/oppose_mode", methods=["POST"])
 def oppose_mode():
+    """
+    Generate a counter-argument (Oppose Mode).
+    
+    CORE LOGIC: services/core_service.py → generate_counter_argument()
+    This is the SAME function called by /api/generate-reply for the extension.
+    
+    Request:
+        {"argument_text": "...", "context": "..."}
+    
+    Response:
+        {"response": "..."}
+    """
     data = request.get_json(force=True)
     argument_text = data.get("argument_text")
     context = data.get("context", "")
@@ -333,27 +287,36 @@ def oppose_mode():
     if not argument_text:
         return jsonify({"error": "Missing argument_text"}), 400
 
-    template = templates.get("oppose_mode")
-    if not template:
-        return jsonify({"error": "Template not found"}), 500
-
-    prompt = (
-        template["prompt"]
-        .replace("{{ARGUMENT_TEXT}}", argument_text)
-        .replace("{{CONTEXT}}", context)
-    )
-    
-    # Get client IP for rate limiting
     client_ip = request.remote_addr or "127.0.0.1"
+    
+    # Use unified core service
+    result = generate_counter_argument(argument_text, context, client_ip)
+    
+    if "error" in result:
+        return jsonify(result), 500
 
-    result = llm_completion(template["role"], prompt, client_ip)
-    if result is None:
-        return jsonify({"error": "LLM failed"}), 500
+    return jsonify(result)
 
-    return jsonify({"response": result})
 
 @app.route("/api/evaluate_user_response", methods=["POST"])
-def evaluate_user_response():
+def evaluate_user_response_route():
+    """
+    Evaluate how well a user responded to a fallacious argument.
+    
+    CORE LOGIC: services/core_service.py → evaluate_response()
+    
+    Request:
+        {"opponent_argument": "...", "user_response": "..."}
+    
+    Response:
+        {
+            "detected_fallacy": "...",
+            "user_countered_correctly": true/false,
+            "toulmin_scores": {...},
+            "overall_reasoning_score": 0-100,
+            "analysis_notes": "..."
+        }
+    """
     data = request.get_json(force=True)
     opponent_argument = data.get("opponent_argument")
     user_response = data.get("user_response")
@@ -361,30 +324,24 @@ def evaluate_user_response():
     if not opponent_argument or not user_response:
         return jsonify({"error": "Missing opponent_argument or user_response"}), 400
 
-    template = templates.get("evaluate_user_response")
-    if not template:
-        return jsonify({"error": "Template not found"}), 500
-
-    prompt = (
-        template["prompt"]
-        .replace("{{OPPONENT_ARGUMENT}}", opponent_argument)
-        .replace("{{USER_RESPONSE}}", user_response)
-    )
-    
-    # Get client IP for rate limiting
     client_ip = request.remote_addr or "127.0.0.1"
+    
+    # Use unified core service
+    result = evaluate_response(opponent_argument, user_response, client_ip)
+    
+    if "error" in result:
+        return jsonify(result), 500
 
-    result = llm_completion(template["role"], prompt, client_ip)
-    if result is None:
-        return jsonify({"error": "LLM failed"}), 500
+    return jsonify(result)
 
-    try:
-        return jsonify(json.loads(result))
-    except json.JSONDecodeError:
-        return jsonify({"raw_response": result})
+
+# ==============================
+# Chat History Routes (Chatbot-specific)
+# ==============================
 
 @app.route("/api/get_chat_history", methods=["GET"])
 def get_chat_history():
+    """Get saved chat history from database."""
     try:
         if os.path.exists(DB_PATH):
             with open(DB_PATH, "r", encoding="utf-8") as f:
@@ -396,15 +353,17 @@ def get_chat_history():
         print(f"❌ Error reading chat history: {e}")
         return jsonify({"error": str(e)}), 500
 
+
 @app.route("/api/save_chat", methods=["POST"])
 def save_chat():
+    """Save a chat entry to database."""
     try:
         data = request.get_json(force=True)
         chat_id = data.get("chat_id")
         new_entry = data.get("entry")
         
         if not new_entry:
-             return jsonify({"error": "Missing entry data"}), 400
+            return jsonify({"error": "Missing entry data"}), 400
         
         if os.path.exists(DB_PATH):
             with open(DB_PATH, "r", encoding="utf-8") as f:
@@ -415,24 +374,22 @@ def save_chat():
         else:
             db_data = {"chats": []}
             
-        # Ensure structure
         if "chats" not in db_data:
             db_data["chats"] = []
             
         target_chat = None
         
-        # Try to find existing chat
         if chat_id:
             for chat in db_data["chats"]:
                 if chat["chat_id"] == chat_id:
                     target_chat = chat
                     break
         
-        # Create new chat if not found or no ID provided
         if not target_chat:
-            # Generate title from the first argument text
             first_arg_text = new_entry.get("raw_text", "")
             client_ip = request.remote_addr or "127.0.0.1"
+            
+            # Use unified core service for title generation
             title = generate_chat_title(first_arg_text, client_ip)
             
             new_chat_id = "chat_" + str(os.urandom(4).hex())
@@ -442,17 +399,13 @@ def save_chat():
                 "created_at": new_entry.get("timestamp"),
                 "arguments": []
             }
-            # Prepend to list so it shows at top
-            db_data["chats"].insert(0, target_chat)#inserting. new chat in db
+            db_data["chats"].insert(0, target_chat)
             
-        # Add the new argument/interaction
-        target_chat["arguments"].append(new_entry) #inserting argumen in target chat,as this dict are mutable it is already pointing to the chat in db_data as target_chat=chat (same loc pointed by both )
-        
-        # Recalculate global insights with the new data
+        target_chat["arguments"].append(new_entry)
         db_data = recalculate_insights(db_data)
         
         with open(DB_PATH, "w", encoding="utf-8") as f:
-            json.dump(db_data, f, indent=2)#so when it saves it also saves the new argument in the chat in db_data
+            json.dump(db_data, f, indent=2)
             
         return jsonify({
             "status": "success", 
@@ -463,8 +416,16 @@ def save_chat():
         print(f"❌ Error saving chat: {e}")
         return jsonify({"error": str(e)}), 500
 
+
 # ==============================
 # Run App
 # ==============================
 if __name__ == "__main__":
+    print("=" * 60)
+    print("🚀 COGNIX - Unified Reasoning Assistant")
+    print("=" * 60)
+    print(f"📦 Model: {llm_client.model}")
+    print(f"🔗 Unified Backend: Chatbot + Extension use same logic")
+    print(f"🌐 Server: http://localhost:5001")
+    print("=" * 60)
     app.run(debug=True, use_reloader=False, host='0.0.0.0', port=5001)

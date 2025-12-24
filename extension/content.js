@@ -487,6 +487,59 @@ function setFieldText(field, text) {
 }
 
 /**
+ * Insert text into field with proper contenteditable support
+ * ✅ FIX: This function properly handles all field types including
+ * contenteditable divs used by social media platforms
+ */
+function insertTextIntoField(field, text) {
+  // Focus the field first
+  field.focus();
+  
+  if (field.tagName === 'TEXTAREA' || field.tagName === 'INPUT') {
+    // Standard input/textarea
+    field.value = text;
+    field.dispatchEvent(new Event('input', { bubbles: true }));
+    field.dispatchEvent(new Event('change', { bubbles: true }));
+  } else {
+    // Contenteditable field (Facebook, Twitter, LinkedIn, etc.)
+    // Method 1: Try execCommand (works on most browsers)
+    const selection = window.getSelection();
+    const range = document.createRange();
+    
+    // Select all content in the field
+    range.selectNodeContents(field);
+    selection.removeAllRanges();
+    selection.addRange(range);
+    
+    // Try using execCommand to insert text (replaces selection)
+    const success = document.execCommand('insertText', false, text);
+    
+    if (!success) {
+      // Method 2: Fallback - directly set content
+      field.innerText = text;
+    }
+    
+    // Trigger events to notify the platform's JavaScript
+    field.dispatchEvent(new Event('input', { bubbles: true, cancelable: true }));
+    field.dispatchEvent(new Event('change', { bubbles: true }));
+    
+    // Some platforms use custom events
+    field.dispatchEvent(new KeyboardEvent('keydown', { bubbles: true, key: 'a' }));
+    field.dispatchEvent(new KeyboardEvent('keyup', { bubbles: true, key: 'a' }));
+    
+    // Move cursor to end
+    const newRange = document.createRange();
+    newRange.selectNodeContents(field);
+    newRange.collapse(false); // false = collapse to end
+    selection.removeAllRanges();
+    selection.addRange(newRange);
+  }
+  
+  // Keep focus on the field
+  field.focus();
+}
+
+/**
  * Show the floating activation button for a field
  * Positioned at bottom-right corner, Grammarly-style
  */
@@ -683,20 +736,39 @@ async function triggerManualAnalysis(field, button) {
 
 /**
  * Display analysis results as panel near the field
- * Enhanced with Toulmin analysis and verified fallacies
+ * 
+ * ┌──────────────────────────────────────────────────────────────────┐
+ * │ ✅ UI PARITY FIX (2024-12-24):                                   │
+ * │                                                                  │
+ * │ This function now reads the CHATBOT response format directly:    │
+ * │   - elements.claim.text / elements.claim.strength                │
+ * │   - fallacies_present (array of strings)                         │
+ * │   - improved_statement                                           │
+ * │   - feedback                                                     │
+ * │   - fallacy_resistance_score, logical_consistency_score, etc.    │
+ * │                                                                  │
+ * │ NO TRANSFORMATION - same data structure as chatbot receives.     │
+ * └──────────────────────────────────────────────────────────────────┘
  */
 function displayAnalysisResults(data, field) {
-  console.log('📊 Analysis results:', data);
+  console.log('📊 Analysis results (raw chatbot format):', data);
   
-  const { fallacies = [], issues = [], suggestions = [], toulminAnalysis, overallAssessment } = data;
-  
-  // Use fallacies if available, otherwise use legacy issues
-  const displayIssues = fallacies.length > 0 ? fallacies : issues;
+  // ✅ Read CHATBOT format: elements, fallacies_present, improved_statement, feedback
+  const elements = data.elements || {};
+  const fallacies_present = data.fallacies_present || [];
+  const improved_statement = data.improved_statement || '';
+  const feedback = data.feedback || '';
+  const fallacy_resistance_score = data.fallacy_resistance_score || 0;
+  const logical_consistency_score = data.logical_consistency_score || 0;
+  const clarity_score = data.clarity_score || 0;
   
   // Clear previous panel
   clearSuggestions(field);
   
-  if (displayIssues.length === 0 && (!toulminAnalysis || isArgumentStrong(toulminAnalysis))) {
+  // Check if argument is strong (using chatbot's element strength scores)
+  const isStrong = isArgumentStrongFromElements(elements);
+  
+  if (fallacies_present.length === 0 && isStrong) {
     // No issues found - show positive feedback
     showPositiveFeedback(field);
     return;
@@ -711,49 +783,82 @@ function displayAnalysisResults(data, field) {
   header.innerHTML = `
     <div class="reasoning-panel-title">
       <span class="reasoning-panel-title-icon">🧠</span>
-      Analysis Results
+      Analysis Complete
     </div>
   `;
-  
-  // Close button already added in createOverlay
   overlay.insertBefore(header, overlay.firstChild.nextSibling);
   
-  // Add Toulmin score if available
-  if (toulminAnalysis) {
-    const toulminSection = createToulminSection(toulminAnalysis);
+  // ✅ Display Toulmin elements using CHATBOT format (elements.X.text, elements.X.strength)
+  if (Object.keys(elements).length > 0) {
+    const toulminSection = createToulminSectionFromChatbotFormat(elements);
     overlay.appendChild(toulminSection);
   }
   
-  // Display each fallacy/issue
-  if (displayIssues.length > 0) {
-    const issuesSection = document.createElement('div');
-    issuesSection.className = 'reasoning-issues-section';
+  // ✅ Display fallacies using CHATBOT format (fallacies_present array)
+  if (fallacies_present.length > 0) {
+    const fallaciesSection = document.createElement('div');
+    fallaciesSection.className = 'reasoning-issues-section';
     
     const issuesTitle = document.createElement('div');
     issuesTitle.className = 'reasoning-section-title';
-    issuesTitle.innerHTML = `<span class="reasoning-icon">⚠️</span> Detected Issues (${displayIssues.length})`;
-    issuesSection.appendChild(issuesTitle);
+    issuesTitle.innerHTML = `<span class="reasoning-icon">⚠️</span> Fallacies Detected (${fallacies_present.length})`;
+    fallaciesSection.appendChild(issuesTitle);
     
-    displayIssues.forEach((issue, index) => {
-      const issueElement = createIssueElement(issue, index);
-      issuesSection.appendChild(issueElement);
+    fallacies_present.forEach((fallacyName, index) => {
+      const issueElement = document.createElement('div');
+      issueElement.className = 'reasoning-issue reasoning-warning reasoning-issue-compact';
+      // ✅ COMPACT: Single-line fallacy display without redundant text
+      issueElement.innerHTML = `
+        <div class="reasoning-issue-header">
+          <div class="reasoning-issue-title">
+            <span class="reasoning-icon-small">⚠️</span>
+            <span class="reasoning-type">${fallacyName}</span>
+          </div>
+        </div>
+      `;
+      fallaciesSection.appendChild(issueElement);
     });
     
-    overlay.appendChild(issuesSection);
+    overlay.appendChild(fallaciesSection);
   }
   
-  // Display suggestions if available
-  if (suggestions && suggestions.length > 0) {
-    const suggestionsContainer = createSuggestionsContainer(suggestions, field);
+  // ✅ Display improved statement using CHATBOT format
+  if (improved_statement) {
+    const suggestionsContainer = document.createElement('div');
+    suggestionsContainer.className = 'reasoning-suggestions';
+    
+    const title = document.createElement('div');
+    title.className = 'reasoning-section-title';
+    title.innerHTML = '<span class="reasoning-icon">💡</span> Improved Statement';
+    suggestionsContainer.appendChild(title);
+    
+    const suggestionElement = document.createElement('div');
+    suggestionElement.className = 'reasoning-suggestion-item';
+    // ✅ REMOVED: Edit button - only Accept button now
+    suggestionElement.innerHTML = `
+      <div class="reasoning-suggestion-text">${improved_statement}</div>
+      <div class="reasoning-suggestion-actions">
+        <button class="reasoning-btn reasoning-btn-accept reasoning-btn-small">✓ Accept</button>
+      </div>
+    `;
+    
+    // Add click handler for Accept button
+    const acceptBtn = suggestionElement.querySelector('.reasoning-btn-accept');
+    acceptBtn.addEventListener('click', () => {
+      // ✅ FIX: Properly insert text into contenteditable fields
+      insertTextIntoField(field, improved_statement);
+      clearSuggestions(field);
+      showFeedback(field, '✓ Improvement applied!', 'success');
+    });
+    
+    suggestionsContainer.appendChild(suggestionElement);
     overlay.appendChild(suggestionsContainer);
   }
   
-  // Add overall assessment if available
-  if (overallAssessment) {
-    const assessmentDiv = document.createElement('div');
-    assessmentDiv.className = 'reasoning-assessment';
-    assessmentDiv.textContent = overallAssessment;
-    overlay.appendChild(assessmentDiv);
+  // ✅ Display feedback using CHATBOT format - COLLAPSIBLE (hidden by default)
+  if (feedback) {
+    const feedbackWrapper = createCollapsibleFeedback(feedback);
+    overlay.appendChild(feedbackWrapper);
   }
   
   // Position and show overlay
@@ -763,7 +868,86 @@ function displayAnalysisResults(data, field) {
 }
 
 /**
+ * Check if argument is strong using CHATBOT format (elements.X.strength)
+ * 
+ * ✅ UI PARITY: Uses chatbot's element.strength (0-10 scale)
+ */
+function isArgumentStrongFromElements(elements) {
+  const factors = ['claim', 'data', 'warrant'];
+  let strongCount = 0;
+  
+  factors.forEach(factor => {
+    const element = elements[factor];
+    if (element && element.strength >= 7) {
+      strongCount++;
+    }
+  });
+  
+  return strongCount >= 2;
+}
+
+/**
+ * Creates a collapsible Feedback section
+ * 
+ * ┌──────────────────────────────────────────────────────────────────┐
+ * │ ✅ UI ENHANCEMENT (2024-12-25):                                  │
+ * │                                                                  │
+ * │ - Hidden by default with small toggle button                     │
+ * │ - Click to expand/collapse with smooth animation                 │
+ * │ - Clean, unobtrusive UI                                          │
+ * └──────────────────────────────────────────────────────────────────┘
+ */
+function createCollapsibleFeedback(feedbackText) {
+  // Create wrapper container
+  const wrapper = document.createElement('div');
+  wrapper.className = 'reasoning-feedback-wrapper';
+  
+  // ===== CREATE TOGGLE BUTTON (Visible by default) =====
+  const toggleBtn = document.createElement('div');
+  toggleBtn.className = 'reasoning-feedback-toggle';
+  toggleBtn.innerHTML = `
+    <div class="reasoning-feedback-toggle-text">
+      <span class="reasoning-feedback-toggle-icon">💬</span>
+      <span>View Feedback</span>
+    </div>
+    <span class="reasoning-feedback-toggle-arrow">▼</span>
+  `;
+  wrapper.appendChild(toggleBtn);
+  
+  // ===== CREATE COLLAPSIBLE CONTENT (Hidden by default) =====
+  const collapsibleContent = document.createElement('div');
+  collapsibleContent.className = 'reasoning-feedback-collapsible';
+  
+  const feedbackContent = document.createElement('div');
+  feedbackContent.className = 'reasoning-feedback-content';
+  feedbackContent.textContent = feedbackText;
+  collapsibleContent.appendChild(feedbackContent);
+  
+  wrapper.appendChild(collapsibleContent);
+  
+  // ===== TOGGLE CLICK HANDLER =====
+  toggleBtn.addEventListener('click', () => {
+    const isExpanded = toggleBtn.classList.contains('expanded');
+    
+    if (isExpanded) {
+      // Collapse
+      toggleBtn.classList.remove('expanded');
+      collapsibleContent.classList.remove('expanded');
+      toggleBtn.querySelector('.reasoning-feedback-toggle-text span:last-child').textContent = 'View Feedback';
+    } else {
+      // Expand
+      toggleBtn.classList.add('expanded');
+      collapsibleContent.classList.add('expanded');
+      toggleBtn.querySelector('.reasoning-feedback-toggle-text span:last-child').textContent = 'Hide Feedback';
+    }
+  });
+  
+  return wrapper;
+}
+
+/**
  * Check if Toulmin analysis indicates a strong argument
+ * LEGACY: Kept for backward compatibility
  */
 function isArgumentStrong(toulminAnalysis) {
   const factors = ['claim', 'data', 'warrant'];
@@ -779,7 +963,124 @@ function isArgumentStrong(toulminAnalysis) {
 }
 
 /**
+ * Creates a collapsible Toulmin Model section from CHATBOT response format
+ * 
+ * ┌──────────────────────────────────────────────────────────────────┐
+ * │ ✅ UI ENHANCEMENT (2024-12-25):                                  │
+ * │                                                                  │
+ * │ - Hidden by default with small toggle button                     │
+ * │ - Click to expand/collapse with smooth animation                 │
+ * │ - Clean, unobtrusive UI                                          │
+ * └──────────────────────────────────────────────────────────────────┘
+ */
+function createToulminSectionFromChatbotFormat(elements) {
+  // Create wrapper container
+  const wrapper = document.createElement('div');
+  wrapper.className = 'reasoning-toulmin-wrapper';
+  
+  // ===== CREATE TOGGLE BUTTON (Visible by default) =====
+  const toggleBtn = document.createElement('div');
+  toggleBtn.className = 'reasoning-toulmin-toggle';
+  toggleBtn.innerHTML = `
+    <div class="reasoning-toulmin-toggle-text">
+      <span class="reasoning-toulmin-toggle-icon">📐</span>
+      <span>View Argument Structure (Toulmin Model)</span>
+    </div>
+    <span class="reasoning-toulmin-toggle-arrow">▼</span>
+  `;
+  wrapper.appendChild(toggleBtn);
+  
+  // ===== CREATE COLLAPSIBLE CONTENT (Hidden by default) =====
+  const collapsibleContent = document.createElement('div');
+  collapsibleContent.className = 'reasoning-toulmin-collapsible';
+  
+  const factors = ['claim', 'data', 'warrant', 'backing', 'qualifier', 'rebuttal'];
+  const factorLabels = {
+    claim: 'Claim',
+    data: 'Data',
+    warrant: 'Warrant',
+    backing: 'Backing',
+    qualifier: 'Qualifier',
+    rebuttal: 'Rebuttal'
+  };
+  
+  // Create the grid for scores
+  const grid = document.createElement('div');
+  grid.className = 'reasoning-toulmin-grid';
+  
+  factors.forEach(factor => {
+    const element = elements[factor];
+    if (!element) return;
+    
+    const item = document.createElement('div');
+    item.className = 'reasoning-toulmin-item';
+    
+    // ✅ Use chatbot's strength (0-10 scale)
+    const strength = element.strength || 0;
+    const scoreClass = strength >= 7 ? 'good' : strength >= 4 ? 'moderate' : 'weak';
+    
+    item.innerHTML = `
+      <div class="reasoning-toulmin-label">${factorLabels[factor]}</div>
+      <div class="reasoning-toulmin-bar">
+        <div class="reasoning-toulmin-fill reasoning-${scoreClass}" style="width: ${strength * 10}%"></div>
+      </div>
+      <div class="reasoning-toulmin-score">${strength}/10</div>
+    `;
+    
+    // ✅ Add tooltip with actual TEXT from chatbot
+    if (element.text) {
+      item.title = `${factorLabels[factor]}: ${element.text}`;
+    }
+    
+    grid.appendChild(item);
+  });
+  
+  collapsibleContent.appendChild(grid);
+  
+  // Add detailed text breakdown (matching chatbot display)
+  const detailsDiv = document.createElement('div');
+  detailsDiv.className = 'reasoning-toulmin-details';
+  detailsDiv.style.marginTop = '12px';
+  detailsDiv.style.fontSize = '12px';
+  detailsDiv.style.lineHeight = '1.6';
+  detailsDiv.style.color = 'var(--reasoning-text-muted, #6b7280)';
+  
+  factors.forEach(factor => {
+    const element = elements[factor];
+    if (element && element.text) {
+      const detailLine = document.createElement('div');
+      detailLine.style.marginBottom = '6px';
+      detailLine.innerHTML = `<strong style="color: var(--reasoning-text, #1f2937)">${factorLabels[factor]}:</strong> ${element.text}`;
+      detailsDiv.appendChild(detailLine);
+    }
+  });
+  
+  collapsibleContent.appendChild(detailsDiv);
+  wrapper.appendChild(collapsibleContent);
+  
+  // ===== TOGGLE CLICK HANDLER =====
+  toggleBtn.addEventListener('click', () => {
+    const isExpanded = toggleBtn.classList.contains('expanded');
+    
+    if (isExpanded) {
+      // Collapse
+      toggleBtn.classList.remove('expanded');
+      collapsibleContent.classList.remove('expanded');
+      toggleBtn.querySelector('.reasoning-toulmin-toggle-text span:last-child').textContent = 'View Argument Structure (Toulmin Model)';
+    } else {
+      // Expand
+      toggleBtn.classList.add('expanded');
+      collapsibleContent.classList.add('expanded');
+      toggleBtn.querySelector('.reasoning-toulmin-toggle-text span:last-child').textContent = 'Hide Argument Structure (Toulmin Model)';
+    }
+  });
+  
+  return wrapper;
+}
+
+/**
  * Create Toulmin analysis section
+ * LEGACY: Kept for backward compatibility with old format
  */
 function createToulminSection(analysis) {
   const section = document.createElement('div');
@@ -924,40 +1225,24 @@ function createSuggestionsContainer(suggestions, field) {
     const suggestionElement = document.createElement('div');
     suggestionElement.className = 'reasoning-suggestion-item';
     
+    // ✅ REMOVED: Edit and Ignore buttons - only Accept button now
     suggestionElement.innerHTML = `
       <div class="reasoning-suggestion-text">${suggestion.text}</div>
       ${suggestion.rationale ? `<div class="reasoning-suggestion-rationale">${suggestion.rationale}</div>` : ''}
       <div class="reasoning-suggestion-actions">
-        <button class="reasoning-btn reasoning-btn-accept" data-index="${index}">
+        <button class="reasoning-btn reasoning-btn-accept reasoning-btn-small" data-index="${index}">
           ✓ Accept
-        </button>
-        <button class="reasoning-btn reasoning-btn-edit" data-index="${index}">
-          ✎ Edit
-        </button>
-        <button class="reasoning-btn reasoning-btn-ignore" data-index="${index}">
-          ✕ Ignore
         </button>
       </div>
     `;
     
-    // Add click handlers
+    // Add click handler for Accept button
     const acceptBtn = suggestionElement.querySelector('.reasoning-btn-accept');
     acceptBtn.addEventListener('click', () => {
-      setFieldText(field, suggestion.text);
+      // ✅ FIX: Use insertTextIntoField for proper contenteditable support
+      insertTextIntoField(field, suggestion.text);
       clearSuggestions(field);
       showFeedback(field, '✓ Suggestion applied!', 'success');
-    });
-    
-    const editBtn = suggestionElement.querySelector('.reasoning-btn-edit');
-    editBtn.addEventListener('click', () => {
-      setFieldText(field, suggestion.text);
-      field.focus();
-      clearSuggestions(field);
-    });
-    
-    const ignoreBtn = suggestionElement.querySelector('.reasoning-btn-ignore');
-    ignoreBtn.addEventListener('click', () => {
-      suggestionElement.remove();
     });
     
     container.appendChild(suggestionElement);

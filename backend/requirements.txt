@@ -1,8 +1,0 @@
-# REQUIREMENTS
-
-flask
-flask-cors
-openai
-python-dotenv
-requests
-cohere

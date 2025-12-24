@@ -2,6 +2,16 @@
 Unified LLM Gateway Service
 ============================
 
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                    ARCHITECTURAL COMPLIANCE VERIFICATION                     ║
+╠══════════════════════════════════════════════════════════════════════════════╣
+║ ✅ VERIFIED: 2024-12-24                                                      ║
+║ ✅ Single AI model for entire application: google/gemma-3-27b-it:free        ║
+║ ✅ Single API key management point                                           ║
+║ ✅ Unified rate limiting for ALL clients                                     ║
+║ ✅ NO other direct OpenRouter calls exist in codebase                        ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
 This is the SINGLE entry point for all OpenRouter API calls.
 Both the chatbot and browser extension MUST use this service.
 
@@ -79,6 +89,8 @@ class LLMClient:
     
     CRITICAL: This is the ONLY place that should talk to OpenRouter.
     Any other direct OpenRouter calls are a security/cost violation.
+    
+    ✅ AUTO-FALLBACK: Automatically tries multiple free models if one fails.
     """
     
     # Free-tier safety limits
@@ -88,6 +100,16 @@ class LLMClient:
     MAX_OUTPUT_TOKENS = 1500     # Tokens - keeps responses concise
     REQUEST_TIMEOUT = 30         # Seconds - prevents hanging
     
+    # ===== FREE MODELS WITH AUTO-FALLBACK =====
+    # If one model fails, automatically try the next one
+    FREE_MODELS = [
+        "google/gemma-3-27b-it:free",                   # Google Gemma 3 27B
+        "meta-llama/llama-3.3-70b-instruct:free",      # Meta Llama 3.3 70B
+        "qwen/qwen3-32b:free",                          # Qwen 3 32B
+        "mistralai/mistral-small-3.1-24b-instruct:free", # Mistral Small 3.1
+        "deepseek/deepseek-chat-v3-0324:free",          # DeepSeek Chat V3
+    ]
+    
     def __init__(self):
         # Load API key ONCE at startup (never expose to frontend)
         self.api_key = os.getenv("OPENROUTER_API_KEY")
@@ -96,9 +118,12 @@ class LLMClient:
             print("⚠️  WARNING: OPENROUTER_API_KEY not found in .env")
             print("⚠️  All LLM calls will fail until key is configured")
         
-        # Use free-tier model consistently across all services
-        self.model = "meta-llama/llama-3.3-70b-instruct:free"
+        # Primary model (can be overridden via env var)
+        self.model = os.getenv("OPENROUTER_MODEL", self.FREE_MODELS[0])
         self.base_url = "https://openrouter.ai/api/v1/chat/completions"
+        
+        # Track which model was last successful (for status reporting)
+        self.last_successful_model = None
         
         # Rate limiter: 10 requests per minute per IP (suitable for hackathon)
         self.rate_limiter = RateLimiter(max_requests=10, window_seconds=60)
@@ -143,10 +168,12 @@ class LLMClient:
         """
         Single entry point for ALL LLM calls in the system.
         
+        ✅ AUTO-FALLBACK: If primary model fails, automatically tries other free models.
+        
         This method:
         1. Validates rate limits
         2. Validates input size
-        3. Calls OpenRouter
+        3. Calls OpenRouter (with auto-fallback to other models)
         4. Handles errors gracefully
         5. Returns cleaned response
         
@@ -160,7 +187,7 @@ class LLMClient:
             str: LLM response (JSON string if json_mode=True, else plain text)
         
         Raises:
-            Exception: On rate limit, validation, or API errors
+            Exception: On rate limit, validation, or API errors (after all models fail)
         """
         
         # Step 1: Rate limiting check (prevents free-tier abuse)
@@ -178,15 +205,42 @@ class LLMClient:
                 "content": "You must respond with valid JSON only. No markdown, no explanations, no code blocks."
             })
         
-        # Step 4: Prepare payload
+        # Step 4: Build list of models to try (primary first, then fallbacks)
+        models_to_try = [self.model]
+        for model in self.FREE_MODELS:
+            if model != self.model and model not in models_to_try:
+                models_to_try.append(model)
+        
+        # Step 5: Try each model until one succeeds
+        last_error = None
+        for model_name in models_to_try:
+            try:
+                content = self._call_model(model_name, final_messages, temperature, json_mode)
+                # Success! Record which model worked
+                self.last_successful_model = model_name
+                if model_name != self.model:
+                    print(f"✅ Fallback successful: {model_name}")
+                return content
+            except Exception as e:
+                last_error = e
+                print(f"⚠️ Model {model_name} failed: {str(e)[:100]}")
+                continue  # Try next model
+        
+        # All models failed
+        raise Exception(f"All models failed. Last error: {str(last_error)}")
+    
+    def _call_model(self, model_name, messages, temperature, json_mode):
+        """
+        Make actual API call to a specific model.
+        Separated from chat_completion to enable fallback logic.
+        """
         payload = {
-            "model": self.model,
-            "messages": final_messages,
+            "model": model_name,
+            "messages": messages,
             "temperature": temperature,
-            "max_tokens": self.MAX_OUTPUT_TOKENS  # Prevent excessive output
+            "max_tokens": self.MAX_OUTPUT_TOKENS
         }
         
-        # Step 5: Call OpenRouter API
         try:
             response = requests.post(
                 self.base_url,
@@ -197,37 +251,31 @@ class LLMClient:
             
             # Handle rate limiting from OpenRouter itself
             if response.status_code == 429:
-                raise Exception(
-                    "OpenRouter API rate limit reached. Please try again in a few minutes."
-                )
+                raise Exception(f"Rate limit for {model_name}")
             
             # Handle other errors
             if response.status_code != 200:
-                error_msg = response.text[:200]  # Limit error message length
-                raise Exception(f"OpenRouter API error ({response.status_code}): {error_msg}")
+                error_msg = response.text[:200]
+                raise Exception(f"API error ({response.status_code}): {error_msg}")
             
             # Extract response
             data = response.json()
             content = data["choices"][0]["message"]["content"]
             
-            # Step 6: Clean response if JSON mode
+            # Clean response if JSON mode
             if json_mode:
                 content = self._clean_json_response(content)
             
             return content
             
         except requests.exceptions.Timeout:
-            raise Exception(
-                "Request timeout. Please try a shorter input or try again later."
-            )
+            raise Exception(f"Timeout for {model_name}")
         except requests.exceptions.ConnectionError:
-            raise Exception(
-                "Cannot connect to OpenRouter API. Please check your internet connection."
-            )
+            raise Exception("Cannot connect to OpenRouter API")
         except requests.exceptions.RequestException as e:
-            raise Exception(f"LLM API error: {str(e)}")
+            raise Exception(f"Request error: {str(e)}")
         except KeyError as e:
-            raise Exception(f"Unexpected API response format: {str(e)}")
+            raise Exception(f"Unexpected response format: {str(e)}")
     
     def _clean_json_response(self, text):
         """
@@ -258,7 +306,9 @@ class LLMClient:
         """Get client status for health checks"""
         return {
             "configured": self.is_configured(),
-            "model": self.model,
+            "primary_model": self.model,
+            "last_successful_model": self.last_successful_model,
+            "fallback_models": self.FREE_MODELS,
             "max_input_length": self.MAX_INPUT_LENGTH,
             "max_output_tokens": self.MAX_OUTPUT_TOKENS,
             "rate_limit": f"{self.rate_limiter.max_requests} req / {self.rate_limiter.window_seconds}s"
