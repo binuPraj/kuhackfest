@@ -1,0 +1,1488 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COGNIX | Reasoning Assistant</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,700;1,700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+        :root {
+            --bg-primary: #faf8f5;
+            --bg-secondary: #f5f1eb;
+            --bg-card: #fffef9;
+            --bg-dark: #2d2a26;
+            --text-primary: #2d2a26;
+            --text-secondary: #5c564d;
+            --text-muted: #8a8279;
+            --text-light: #e8e3da;
+            --accent-primary: #d35400; /* Orange/Brown - Default/Support */
+            --accent-support: #1e8449; /* Green - Strong Argument */
+            --accent-oppose: #c0392b; /* Red - Challenge/Oppose */
+            --border-color: #d5cfc4;
+            --border-dark: #b8b1a5;
+            --font-family: "Space Grotesk", sans-serif;
+            --font-display: "Playfair Display", Georgia, serif;
+            --font-mono: "JetBrains Mono", monospace;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: var(--font-family);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: var(--bg-dark);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .sidebar-header {
+            padding: 12px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px; /* Added margin to separate from logo */
+            margin-bottom: 12px;
+        }
+
+        .sidebar-btn {
+            flex: 1;
+            padding: 10px;
+            background: transparent;
+            border: 1.5px solid rgba(232, 227, 218, 0.3);
+            border-radius: 8px;
+            color: var(--text-light);
+            font-family: var(--font-family);
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.2s ease;
+        }
+
+        .sidebar-btn:hover {
+            background: rgba(232, 227, 218, 0.1);
+            border-color: rgba(232, 227, 218, 0.5);
+        }
+
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--accent-primary);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .logo-text {
+            font-family: var(--font-display);
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-light);
+        }
+
+        /* Mode Selector Improvements */
+        .mode-dropdown-container {
+            position: relative;
+        }
+
+        .mode-btn {
+            width: auto;
+            min-width: 44px;
+            padding: 0 12px;
+            border-radius: 22px; /* Pill shape */
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        /* .mode-btn::after {
+            content: 'Support';
+            font-size: 0.8rem;
+        } */
+        
+        /* .mode-btn.defense::after {
+            content: 'Defense';
+        } */
+
+        .history-header {
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-light);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-family: var(--font-mono);
+            opacity: 0.6;
+        }
+
+        .history-section {
+            flex: 1;
+            overflow-y: auto;
+            padding: 0 8px;
+        }
+
+        .search-bar-container {
+            padding: 0 12px 12px 12px;
+        }
+
+        .history-search {
+            width: 100%;
+            padding: 10px 14px;
+            background: rgba(232, 227, 218, 0.1);
+            border: 1px solid rgba(232, 227, 218, 0.3);
+            border-radius: 6px;
+            color: var(--text-light);
+            font-family: var(--font-family);
+            font-size: 0.9rem;
+            outline: none;
+        }
+
+        .history-search::placeholder {
+            color: var(--text-muted);
+        }
+
+        .history-item {
+            padding: 12px;
+            margin-bottom: 4px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: var(--text-light);
+            font-size: 0.85rem;
+        }
+
+        .history-item:hover {
+            background: rgba(232, 227, 218, 0.1);
+        }
+
+        .history-item.active {
+            background: rgba(232, 227, 218, 0.15);
+        }
+
+        .history-item-text {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .sidebar-footer {
+            padding: 16px;
+            border-top: 1px solid rgba(232, 227, 218, 0.1);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .user-profile:hover {
+            background: rgba(232, 227, 218, 0.1);
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-oppose));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .user-info {
+            flex: 1;
+        }
+
+        .user-name {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .user-plan {
+            color: var(--text-muted);
+            font-size: 0.75rem;
+        }
+
+        .user-menu-icon {
+            color: var(--text-light);
+            opacity: 0.6;
+        }
+
+        /* Main Chat Area */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--bg-primary);
+            position: relative;
+        }
+
+        .main-content::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            opacity: 0.3;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .chat-window {
+            flex: 1;
+            overflow-y: auto;
+            padding: 40px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .message {
+            max-width: 700px;
+            padding: 18px 22px;
+            line-height: 1.7;
+            position: relative;
+            font-size: 1rem;
+            border-radius: 8px; /* Added for clean look */
+        }
+
+        .user-message {
+            align-self: flex-end;
+            background: var(--bg-card);
+            border: 2px solid var(--border-dark);
+            border-right: 4px solid var(--accent-primary);
+            box-shadow: 3px 3px 0 rgba(45, 42, 38, 0.1);
+        }
+
+        .ai-message {
+            align-self: flex-start;
+            background: var(--bg-card);
+            border: 2px solid var(--border-dark);
+            border-left: 4px solid var(--accent-oppose);
+            box-shadow: 3px 3px 0 rgba(45, 42, 38, 0.1);
+        }
+
+        .message-label {
+            font-family: var(--font-mono);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .fallacy-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            background: #fef3c7;
+            color: #b45309;
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            font-weight: 600;
+            border: 2px solid #b45309;
+            margin-top: 12px;
+        }
+
+        /* Input Area */
+        .input-container {
+            padding: 24px 40px 32px;
+            background: var(--bg-primary);
+            position: relative;
+            z-index: 2;
+        }
+
+        .input-wrapper {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--bg-card);
+            border: 2px solid var(--border-dark);
+            border-radius: 24px;
+            padding: 4px;
+            box-shadow: 0 2px 8px rgba(45, 42, 38, 0.1);
+            display: flex;
+            align-items: flex-end;
+            gap: 8px;
+        }
+
+        .input-field {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            padding: 14px 16px;
+            font-family: var(--font-family);
+            font-size: 1rem;
+            resize: none;
+            max-height: 200px;
+            outline: none;
+        }
+
+        .input-field::placeholder {
+            color: var(--text-muted);
+        }
+
+        .input-actions-left, .input-actions-right {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px;
+        }
+
+        .icon-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .icon-btn:hover {
+            background: rgba(45, 42, 38, 0.05);
+            color: var(--text-primary);
+        }
+        
+        /* Mode Button Colors */
+        .icon-btn.mode-btn {
+            background: rgba(45, 42, 38, 0.05);
+        }
+
+        .icon-btn.mode-btn.support {
+            color: var(--accent-support);
+        }
+        
+        .icon-btn.mode-btn.defense {
+            color: var(--accent-oppose);
+        }
+
+        .icon-btn.send-btn {
+            background: var(--accent-primary);
+            color: white;
+        }
+
+        .icon-btn.send-btn:hover {
+            background: var(--accent-primary);
+            opacity: 0.9;
+            transform: scale(1.05);
+        }
+
+        .icon-btn.send-btn:disabled {
+            background: var(--border-color);
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        /* Mode Dropdown */
+        .mode-dropdown-container {
+            position: relative;
+        }
+
+        .mode-dropdown {
+            display: none;
+            position: absolute;
+            bottom: 50px;
+            left: 0;
+            /* transform: translateX(-50%); Removed centering */
+            background: var(--bg-card);
+            border: 2px solid var(--border-dark);
+            border-radius: 12px;
+            padding: 8px;
+            min-width: 180px;
+            box-shadow: 0 4px 12px rgba(45, 42, 38, 0.2);
+            z-index: 100;
+        }
+
+        .mode-dropdown.active {
+            display: block;
+        }
+
+        .mode-option {
+            padding: 10px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+        }
+
+        .mode-option:hover {
+            background: rgba(45, 42, 38, 0.05);
+        }
+
+        .mode-option.active.support {
+            background: var(--accent-support);
+            color: white;
+        }
+
+        .mode-option.active.defense {
+            background: var(--accent-oppose);
+            color: white;
+        }
+
+        .mode-icon {
+            font-size: 1rem;
+        }
+
+        /* Typing Indicator */
+        .typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 12px 16px;
+            background: var(--bg-card);
+            border: 2px solid var(--border-dark);
+            border-radius: 8px;
+            width: fit-content;
+            margin-bottom: 24px;
+            box-shadow: 3px 3px 0 rgba(45, 42, 38, 0.1);
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--text-muted);
+            border-radius: 50%;
+            animation: typing 1.4s infinite ease-in-out both;
+        }
+
+        .typing-dot:nth-child(1) {
+            animation-delay: -0.32s;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: -0.16s;
+        }
+
+        @keyframes typing {
+            0%, 80%, 100% { transform: scale(0); }
+            40% { transform: scale(1); }
+        }
+        
+        /* Chart Overlay */
+        .chart-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(45, 42, 38, 0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .chart-overlay.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: var(--bg-card);
+            border: 4px solid var(--text-primary);
+            box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.3);
+            padding: 25px;
+            width: 55vw;
+            max-height: 85vh; /* Limit height */
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            border-radius: 8px;
+        }
+
+        .modal-body {
+            overflow-y: auto; /* Enable scrolling */
+            padding-right: 10px; /* Space for scrollbar */
+            flex: 1;
+        }
+
+        /* Custom Scrollbar for Modal */
+        .modal-body::-webkit-scrollbar {
+            width: 6px;
+        }
+        .modal-body::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .modal-body::-webkit-scrollbar-thumb {
+            background: var(--border-dark);
+            border-radius: 3px;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--border-color);
+            flex-shrink: 0; /* Prevent header from shrinking */
+        }
+
+        .modal-title {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-primary);
+        }
+
+        .close-btn {
+            background: transparent;
+            color: var(--text-muted);
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        .close-btn:hover {
+            background: rgba(0,0,0,0.05);
+            color: var(--accent-oppose);
+        }
+
+        .chart-container {
+            position: relative;
+            height: 320px;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* Scrollbar */
+        .chat-window::-webkit-scrollbar,
+        .history-section::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .chat-window::-webkit-scrollbar-track,
+        .history-section::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .chat-window::-webkit-scrollbar-thumb {
+            background: var(--border-dark);
+            border-radius: 4px;
+        }
+
+        .history-section::-webkit-scrollbar-thumb {
+            background: rgba(232, 227, 218, 0.2);
+            border-radius: 4px;
+        }
+
+        .chat-window::-webkit-scrollbar-thumb:hover,
+        .history-section::-webkit-scrollbar-thumb:hover {
+            background: var(--text-muted);
+        }
+
+        /* Welcome Message */
+        .welcome-msg {
+            text-align: center;
+            max-width: 600px;
+            margin: 80px auto;
+            padding: 32px;
+            background: var(--bg-card);
+            border: 3px solid var(--border-dark);
+            box-shadow: 6px 6px 0 rgba(45, 42, 38, 0.1);
+            border-radius: 12px;
+        }
+
+        .welcome-msg h2 {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            margin-bottom: 16px;
+            color: var(--accent-primary);
+        }
+
+        .welcome-msg p {
+            color: var(--text-secondary);
+            line-height: 1.8;
+            font-size: 1.05rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-header">
+        <a href="index.html"
+        style="text-decoration:none; color:inherit; display:inline-block;">
+            
+            <div class="logo-section"
+                style="display:flex; align-items:center; cursor:pointer;">
+                
+                <div class="logo-icon">🔍</div>
+                <div class="logo-text">COGNIX</div>
+                
+            </div>
+        </a>
+
+
+
+            <div class="header-actions">
+                <button class="sidebar-btn" onclick="startNewChat()">
+                    <span>+</span>
+                    <span>New chat</span>
+                </button>
+                <button class="sidebar-btn" onclick="toggleChart()">
+                    <span>📊</span>
+                    <span>Insights</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="history-header">
+            <span>📝</span>
+            <span>Recent Conversations</span>
+        </div>
+
+        <div class="search-bar-container">
+            <input type="text" class="history-search" placeholder="Search history..." oninput="filterHistory(this.value)">
+        </div>
+
+        <div class="history-section" id="history-section">
+            <div class="history-item active">
+                <div class="history-item-text">Climate change debate analysis</div>
+            </div>
+            <div class="history-item">
+                <div class="history-item-text">Universal healthcare argument</div>
+            </div>
+            <div class="history-item">
+                <div class="history-item-text">Economic policy discussion</div>
+            </div>
+            <div class="history-item">
+                <div class="history-item-text">Education reform proposal</div>
+            </div>
+            <div class="history-item">
+                <div class="history-item-text">Technology ethics debate</div>
+            </div>
+            <div class="history-item">
+                <div class="history-item-text">Immigration policy analysis</div>
+            </div>
+            <div class="history-item">
+                <div class="history-item-text">Free speech boundaries</div>
+            </div>
+            <div class="history-item">
+                <div class="history-item-text">AI regulation framework</div>
+            </div>
+        </div>
+
+        <div class="sidebar-footer">
+            <div class="user-profile">
+                <div class="user-avatar">DU</div>
+                <div class="user-info">
+                    <div class="user-name">Demo USer</div>
+                    <div class="user-plan">Free Plan</div>
+                </div>
+                <div class="user-menu-icon">⋯</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="chat-window" id="chat-window">
+            <div class="welcome-msg">
+                <h2>Welcome to COGNIX</h2>
+                <p>Select a mode and provide an argument for AI-powered analysis. I'll help you identify fallacies, strengthen your reasoning using Toulmin's Model, and improve your critical thinking.</p>
+                <p>To view your reasoning strength, click the **Insights 📊** button on the left sidebar. </p>
+            </div>
+        </div>
+
+        <div class="input-container">
+            <div class="input-wrapper">
+                <div class="input-actions-left">
+                    <div class="mode-dropdown-container">
+                        <button class="icon-btn mode-btn support" onclick="toggleModeDropdown()" title="Select Mode" id="mode-selector-btn">
+                            🏗️
+                        </button>
+                        <div class="mode-dropdown" id="mode-dropdown">
+                            <div class="mode-option active support" onclick="selectMode('support', this)">
+                                <span class="mode-icon">🏗️</span>
+                                <span>Support Mode</span>
+                            </div>
+                            <div class="mode-option defense" onclick="selectMode('defense', this)">
+                                <span class="mode-icon">⚔️</span>
+                                <span>Defense Mode</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <textarea 
+                    class="input-field" 
+                    id="user-input" 
+                    placeholder="Enter your argument here..."
+                    rows="1"
+                ></textarea>
+                
+                <div class="input-actions-right">
+                    <button class="icon-btn send-btn" onclick="sendMessage()" title="Analyze Argument" id="send-btn">
+                        ➤
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="chart-overlay" id="chart-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Toulmin Analysis Insights</h3>
+                <button class="close-btn" onclick="toggleChart()" title="Close">×</button>
+            </div>
+            
+            <div class="modal-body">
+                <div class="chart-container">
+                    <canvas id="toulminChart"></canvas>
+                </div>
+                
+                <div class="advanced-metrics" style="margin-top: 20px; border-top: 1px solid var(--border-color); padding-top: 15px;">
+                    <h4 style="margin-bottom: 15px; color: var(--text-primary);">Global Performance Metrics</h4>
+                    
+                    <div class="metric-item" style="margin-bottom: 15px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                            <span style="font-size: 0.9rem; color: var(--text-secondary);">Fallacy Resistance</span>
+                            <span id="metric-fallacy" style="font-weight: 600; color: var(--accent-primary);">--</span>
+                        </div>
+                        <div style="height: 8px; background: var(--bg-secondary); border-radius: 4px; overflow: hidden;">
+                            <div id="bar-fallacy" style="height: 100%; width: 0%; background: var(--accent-primary); transition: width 0.5s ease;"></div>
+                        </div>
+                    </div>
+
+                    <div class="metric-item" style="margin-bottom: 15px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                            <span style="font-size: 0.9rem; color: var(--text-secondary);">Logical Consistency</span>
+                            <span id="metric-consistency" style="font-weight: 600; color: var(--accent-primary);">--</span>
+                        </div>
+                        <div style="height: 8px; background: var(--bg-secondary); border-radius: 4px; overflow: hidden;">
+                            <div id="bar-consistency" style="height: 100%; width: 0%; background: var(--accent-support); transition: width 0.5s ease;"></div>
+                        </div>
+                    </div>
+
+                    <div class="metric-item" style="margin-bottom: 15px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                            <span style="font-size: 0.9rem; color: var(--text-secondary);">Clarity Score</span>
+                            <span id="metric-clarity" style="font-weight: 600; color: var(--accent-primary);">--</span>
+                        </div>
+                        <div style="height: 8px; background: var(--bg-secondary); border-radius: 4px; overflow: hidden;">
+                            <div id="bar-clarity" style="height: 100%; width: 0%; background: #f39c12; transition: width 0.5s ease;"></div>
+                        </div>
+                    </div>
+
+                    <div id="common-fallacies-container" style="margin-top: 20px; display: none;">
+                        <h4 style="margin-bottom: 10px; color: var(--text-primary); font-size: 0.95rem;">Common Fallacies Faced</h4>
+                        <div id="common-fallacies-list" style="display: flex; flex-wrap: wrap; gap: 8px;">
+                            <!-- Fallacy tags will be injected here -->
+                        </div>
+                    </div>
+                </div>
+
+                 <p style="margin-top: 20px; font-size: 0.8rem; color: var(--text-muted);">
+                    **Key:** The Radar Chart evaluates structural components (0-100). Advanced metrics assess logical validity and presentation based on historical performance.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let chartInstance = null;
+        let currentData = [0, 0, 0, 0, 0, 0];
+        let currentMetrics = { fallacy: 0, consistency: 0, clarity: 0 };
+        let globalInsights = null; // Store global insights from DB
+        let currentMode = 'support';
+        let currentChatId = null; // Track active chat
+        const modeIcons = {
+            'support': '🏗️',
+            'defense': '⚔️'
+        };
+
+        // Auto-resize textarea
+        const textarea = document.getElementById('user-input');
+        const sendBtn = document.getElementById('send-btn');
+        textarea.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 200) + 'px';
+            
+            // Enable/disable send button
+            sendBtn.disabled = !this.value.trim();
+        });
+
+        // Toggle mode dropdown
+        function toggleModeDropdown() {
+            const dropdown = document.getElementById('mode-dropdown');
+            dropdown.classList.toggle('active');
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            const dropdown = document.getElementById('mode-dropdown');
+            const modeBtn = document.querySelector('.mode-btn');
+            if (!dropdown.contains(e.target) && !modeBtn.contains(e.target)) {
+                dropdown.classList.remove('active');
+            }
+        });
+
+        // Select mode
+        function selectMode(mode, element) {
+            currentMode = mode;
+            
+            // Update dropdown options
+            document.querySelectorAll('.mode-option').forEach(opt => {
+                opt.classList.remove('active', 'support', 'defense');
+            });
+            element.classList.add('active', mode);
+
+            // Update mode selector button icon and color
+            const modeBtn = document.getElementById('mode-selector-btn');
+            modeBtn.innerHTML = modeIcons[mode];
+            modeBtn.classList.remove('support', 'defense');
+            modeBtn.classList.add(mode);
+
+            document.getElementById('mode-dropdown').classList.remove('active');
+        }
+
+        // Send message
+        async function sendMessage() {
+            const input = document.getElementById('user-input');
+            const chatWindow = document.getElementById('chat-window');
+            const text = input.value.trim();
+            
+            if (!text) return;
+
+            const welcome = chatWindow.querySelector('.welcome-msg');
+            if (welcome) welcome.remove();
+
+            // User Message. tobedisplayedinthewindow
+            const userMsg = document.createElement('div');
+            userMsg.className = 'message user-message';
+            userMsg.innerHTML = `
+                <div class="message-label">You</div>
+                ${text.replace(/\n/g, '<br>')}
+            `;
+            chatWindow.appendChild(userMsg);
+
+            // Clear input
+            input.value = '';
+            input.style.height = 'auto';
+            sendBtn.disabled = true;
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+
+            // Typing Indicator
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'typing-indicator';
+            typingDiv.innerHTML = `
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+            `;
+            chatWindow.appendChild(typingDiv);
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+
+            try {
+                let endpoint = '';
+                let payload = {};
+
+                if (currentMode === 'support') {
+                    endpoint = 'http://localhost:5001/api/extract_toulmin';
+                    payload = { argument_text: text };//textisthes\user. typed. msg
+                } else {//A payload is the data you send to the backend so it knows what to process.
+                    endpoint = 'http://localhost:5001/api/oppose_mode';
+                    payload = { argument_text: text, context: "General debate" };
+                }
+
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)//sending. payload
+                });
+
+                const data = await response.json();
+                
+                // Remove typing indicator
+                typingDiv.remove();
+
+                const aiMsg = document.createElement('div');
+                aiMsg.className = 'message ai-message';
+
+                if (currentMode === 'support') {
+                    // Update Chart
+                    if (data.elements) {
+                        const scores = [
+                            data.elements.claim?.strength || 0,
+                            data.elements.data?.strength || 0,
+                            data.elements.warrant?.strength || 0,
+                            data.elements.backing?.strength || 0,
+                            data.elements.qualifier?.strength || 0,
+                            data.elements.rebuttal?.strength || 0
+                        ];
+                        // Scale 0-10 to 0-100
+                        currentData = scores.map(s => s * 10); 
+                        
+                        // Update metrics
+                        currentMetrics = {
+                            fallacy: data.fallacy_resistance_score || 0,
+                            consistency: data.logical_consistency_score || 0,
+                            clarity: data.clarity_score || 0
+                        };
+                        
+                        // If chart is open, re-render
+                        if (document.getElementById('chart-overlay').classList.contains('active')) {
+                            renderChart();
+                        }
+                    }
+
+                    let fallaciesHtml = '';
+                    if (data.fallacies_present && data.fallacies_present.length > 0) {
+                        fallaciesHtml = `<strong>Fallacies Detected:</strong> <span style="color: var(--accent-oppose);">${data.fallacies_present.join(', ')}</span><br><br>`;
+                    }
+
+                    aiMsg.innerHTML = `
+                        <div class="message-label">COGNIX • Support Mode</div>
+                        <strong>Analysis Complete</strong><br><br>
+                        ${fallaciesHtml}
+                        <strong>Claim:</strong> ${data.elements?.claim?.text || 'N/A'}<br>
+                        <strong>Data:</strong> ${data.elements?.data?.text || 'N/A'}<br>
+                        <strong>Warrant:</strong> ${data.elements?.warrant?.text || 'N/A'}<br>
+                        <strong>Backing:</strong> ${data.elements?.backing?.text || 'N/A'}<br>
+                        <strong>Qualifier:</strong> ${data.elements?.qualifier?.text || 'N/A'}<br>
+                        <strong>Rebuttal:</strong> ${data.elements?.rebuttal?.text || 'N/A'}<br><br>
+                        <strong>Improved Statement:</strong> ${data.improved_statement || 'N/A'}<br>
+                        <strong>Feedback:</strong> ${data.feedback || 'No feedback provided.'}
+                    `;
+                } else {
+                    // Defense Mode
+                    let content = data.response || data.raw_response || data.counter_argument || "I couldn't generate a counter-argument.";
+                    
+                    // Clean up JSON string if it leaked
+                    if (typeof content === 'string' && content.trim().startsWith('{')) {
+                        try {
+                            const parsed = JSON.parse(content);
+                            content = parsed.counter_argument || parsed.response || content;
+                        } catch (e) {}
+                    }
+
+                    aiMsg.innerHTML = `
+                        <div class="message-label">COGNIX • Defense Mode</div>
+                        <strong>Challenge Initiated</strong><br><br>
+                        ${content}
+                    `;
+                }
+
+                chatWindow.appendChild(aiMsg);
+                chatWindow.scrollTop = chatWindow.scrollHeight;
+
+                // Save to DB
+                const savePayload = {
+                    chat_id: currentChatId,//during. loading.ofchat. this. is. set
+                    entry: {
+                        argument_id: "arg_" + Date.now(),
+                        raw_text: text,
+                        mode_used: currentMode,
+                        timestamp: new Date().toISOString(),
+                        response: data
+                    }
+                };
+
+                const saveResponse = await fetch('http://localhost:5001/api/save_chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(savePayload)
+                });
+                
+                const saveData = await saveResponse.json();
+                
+                if (saveData.status === 'success') {
+                    // If this was a new chat, update currentChatId and refresh history
+                    if (!currentChatId && saveData.chat_id) {//when. click. neww. chat. thecurrentchatid. is. set. to. null. so. to. confirm. thisisanewchat. and. this. had. been. nowosavedin. db. thiscondition. ischecked. andlater. loaded. inhistory
+                        currentChatId = saveData.chat_id;
+                    }
+                    // Always refresh to get updated global insights
+                    await loadChatHistory();
+                    
+                    // Re-render chart if it's open (to show updated global metrics)
+                    if (document.getElementById('chart-overlay').classList.contains('active')) {
+                        renderChart();
+                    }
+                }
+
+            } catch (error) {
+                console.error('Error:', error);
+                typingDiv.remove();
+                const errorMsg = document.createElement('div');
+                errorMsg.className = 'message ai-message';
+                errorMsg.innerHTML = `<strong>Error:</strong> Could not connect to the server.`;
+                chatWindow.appendChild(errorMsg);
+            }
+        }
+
+        // Chart toggle
+        function toggleChart() {
+            const overlay = document.getElementById('chart-overlay');
+            overlay.classList.toggle('active');
+            
+            if (overlay.classList.contains('active')) {
+                renderChart();
+            }
+        }
+
+        const toulminDefinitions = {
+            'Claim': "The main assertion or conclusion being argued for.",
+            'Data': "The evidence, facts, or data used to support the claim.",
+            'Warrant': "The logical bridge or principle that connects the data to the claim.",
+            'Backing': "Additional justification supporting the warrant, often theoretical, scientific, or institutional.",
+            'Qualifier': "Statements that limit the claim and express the degree of certainty.",
+            'Rebuttal': "Conditions under which the claim would not hold; acknowledgment of counterarguments."
+        };
+
+        // Render chart
+        function renderChart() {
+            const ctx = document.getElementById('toulminChart').getContext('2d');
+            
+            // Determine which metrics to show: Global Insights (if available) or Current Chat Metrics
+            // Prioritize global insights for the "Advanced Metrics" section as requested
+            let displayMetrics = { fallacy: 0, consistency: 0, clarity: 0 };
+            let commonFallacies = [];
+
+            if (globalInsights) {
+                // Use global values from DB
+                // Check if they are 0-10 or 0-100. DB example showed 6.8, 7.1 etc.
+                // Assuming 0-10 scale based on DB example, so multiply by 10 for percentage.
+                // If they are already > 10, assume percentage.
+                
+                const fScore = globalInsights.fallacy_resistance_score || 0;
+                const cScore = globalInsights.logical_consistency_score || 0;
+                const clScore = globalInsights.clarity_score || 0;
+
+                displayMetrics.fallacy = fScore <= 10 ? fScore * 10 : fScore;
+                displayMetrics.consistency = cScore <= 10 ? cScore * 10 : cScore;
+                displayMetrics.clarity = clScore <= 10 ? clScore * 10 : clScore;
+                
+                commonFallacies = globalInsights.common_fallacies_faced || [];
+            } else {
+                // Fallback to current session metrics
+                displayMetrics = currentMetrics;
+            }
+
+            // Update Advanced Metrics UI
+            document.getElementById('metric-fallacy').textContent = Math.round(displayMetrics.fallacy) + '%';
+            document.getElementById('bar-fallacy').style.width = displayMetrics.fallacy + '%';
+            
+            document.getElementById('metric-consistency').textContent = Math.round(displayMetrics.consistency) + '%';
+            document.getElementById('bar-consistency').style.width = displayMetrics.consistency + '%';
+            
+            document.getElementById('metric-clarity').textContent = Math.round(displayMetrics.clarity) + '%';
+            document.getElementById('bar-clarity').style.width = displayMetrics.clarity + '%';
+
+            // Update Common Fallacies
+            const fallaciesContainer = document.getElementById('common-fallacies-container');
+            const fallaciesList = document.getElementById('common-fallacies-list');
+            
+            if (commonFallacies.length > 0) {
+                fallaciesContainer.style.display = 'block';
+                fallaciesList.innerHTML = commonFallacies.map(f => `
+                    <span style="background: rgba(192, 57, 43, 0.1); color: var(--accent-oppose); padding: 4px 10px; border-radius: 12px; font-size: 0.8rem; font-weight: 500;">
+                        ${f.type} (${f.count})
+                    </span>
+                `).join('');
+            } else {
+                fallaciesContainer.style.display = 'none';
+            }
+
+            if (chartInstance) {
+                chartInstance.destroy();
+            }
+            
+            // Use global radar metrics from insights (aggregate of all arguments)
+            // These are stored as 0-10 scale, so multiply by 10 for 0-100 display
+            let radarData = [0, 0, 0, 0, 0, 0];
+            console.log('Global Insights:', globalInsights); // Debug log
+            if (globalInsights && globalInsights.radar_metrics) {
+                const rm = globalInsights.radar_metrics;
+                console.log('Radar Metrics:', rm); // Debug log
+                radarData = [
+                    (rm.claim || 0) * 10,
+                    (rm.data || 0) * 10,
+                    (rm.warrant || 0) * 10,
+                    (rm.backing || 0) * 10,
+                    (rm.qualifier || 0) * 10,
+                    (rm.rebuttal || 0) * 10
+                ];
+                console.log('Radar Data (scaled):', radarData); // Debug log
+            }
+            
+            chartInstance = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['Claim', 'Data', 'Warrant', 'Backing', 'Qualifier', 'Rebuttal'],
+                    datasets: [{
+                        label: 'Overall Argument Strength',
+                        data: radarData,
+                        backgroundColor: 'rgba(30, 132, 73, 0.2)',
+                        borderColor: '#1e8449',
+                        borderWidth: 3,
+                        pointBackgroundColor: '#1e8449',
+                        pointBorderColor: '#2d2a26',
+                        pointBorderWidth: 2,
+                        pointRadius: 6,
+                        pointHoverRadius: 8
+                    }]
+                },
+                options: {
+                    scales: {
+                        r: {
+                            min: 0,
+                            max: 100, // Ensure this matches the 0-100 scale
+                            beginAtZero: true,
+                            angleLines: {
+                                color: '#d5cfc4',
+                                lineWidth: 2
+                            },
+                            grid: {
+                                color: '#d5cfc4',
+                                lineWidth: 2
+                            },
+                            pointLabels: {
+                                color: '#2d2a26',
+                                font: {
+                                    family: 'Space Grotesk',
+                                    size: 13,
+                                    weight: '600'
+                                }
+                            },
+                            ticks: {
+                                display: false,
+                                stepSize: 20
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            enabled: true,
+                            backgroundColor: 'rgba(45, 42, 38, 0.95)',
+                            titleFont: {
+                                family: 'Space Grotesk',
+                                size: 14,
+                                weight: 'bold'
+                            },
+                            bodyFont: {
+                                family: 'Space Grotesk',
+                                size: 13
+                            },
+                            padding: 12,
+                            cornerRadius: 6,
+                            displayColors: true,
+                            callbacks: {
+                                label: function(context) {
+                                    return context.label + ': ' + context.raw + '/100';
+                                },
+                                afterLabel: function(context) {
+                                    const label = context.label;
+                                    const definition = toulminDefinitions[label];
+                                    if (definition) {
+                                        // Wrap text if needed, though Chart.js handles some wrapping.
+                                        // We'll return an array of strings for multi-line support if needed, 
+                                        // but a single string usually works with max-width logic in chart.js or just let it be.
+                                        // Let's split it into chunks of ~50 chars for better readability in tooltip
+                                        const words = definition.split(' ');
+                                        const lines = [];
+                                        let currentLine = '';
+                                        
+                                        words.forEach(word => {
+                                            if ((currentLine + word).length > 50) {
+                                                lines.push(currentLine);
+                                                currentLine = word + ' ';
+                                            } else {
+                                                currentLine += word + ' ';
+                                            }
+                                        });
+                                        lines.push(currentLine);
+                                        return ['', ...lines]; // Add empty line before definition
+                                    }
+                                    return '';
+                                }
+                            }
+                        }
+                    },
+                    maintainAspectRatio: true
+                }
+            });
+        }
+
+        // History item click
+        document.querySelectorAll('.history-item').forEach(item => {
+            item.addEventListener('click', function() {
+                document.querySelectorAll('.history-item').forEach(i => i.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // New chat
+        function startNewChat() {
+            currentChatId = null; // Reset chat ID
+            const chatWindow = document.getElementById('chat-window');
+            chatWindow.innerHTML = `
+                <div class="welcome-msg">
+                    <h2>Welcome to COGNIX</h2>
+                    <p>Select a mode and provide an argument for AI-powered analysis. I'll help you identify fallacies, strengthen your reasoning using Toulmin's Model, and improve your critical thinking.</p>
+                    <p>To view your reasoning strength, click the **Insights 📊** button on the left sidebar. </p>
+                </div>
+            `;
+            document.querySelectorAll('.history-item').forEach(i => i.classList.remove('active'));
+            currentData = [0, 0, 0, 0, 0, 0]; // Reset data
+            currentMetrics = { fallacy: 0, consistency: 0, clarity: 0 }; // Reset metrics
+        }
+
+        // History Search functionality
+        function filterHistory(query) {
+            const items = document.querySelectorAll('.history-item');
+            const lowerQuery = query.toLowerCase();
+            items.forEach(item => {
+                const text = item.textContent.toLowerCase();
+                if (text.includes(lowerQuery)) {
+                    item.style.display = 'block';
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+        }
+
+        // Enter to send
+        textarea.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        // Close overlay with Escape
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                document.getElementById('chart-overlay').classList.remove('active');
+            }
+        });
+
+        // Load Chat History
+        async function loadChatHistory() {
+            try {
+                const response = await fetch('http://localhost:5001/api/get_chat_history');
+                const data = await response.json();
+                
+                // Capture global insights if available
+                if (data.insights) {
+                    globalInsights = data.insights;
+                }
+                
+                const historySection = document.getElementById('history-section');
+                historySection.innerHTML = ''; // Clear static items
+
+                if (data.chats && data.chats.length > 0) {
+                    // Populate Sidebar
+                    data.chats.forEach((chat, index) => {//vhathereisthewholechatobject
+                        const item = document.createElement('div');
+                        item.className = `history-item ${index === 0 ? 'active' : ''}`; // Select first by default
+                        item.innerHTML = `<div class="history-item-text">${chat.title || 'Untitled Chat'}</div>`;
+                        item.onclick = () => loadChat(chat);
+                      //  It assigns a function to the onclick event of that div.
+
+//\That means: the function () => loadChat(chat) will run later, only when the user clicks that specific chat item in the sidebar.
+                        historySection.appendChild(item);
+                    });
+
+                    // Load the first chat
+                    loadChat(data.chats[0]);
+                }
+            } catch (error) {
+                console.error('Error loading history:', error);
+            }
+        }
+
+        function loadChat(chat) {
+            currentChatId = chat.chat_id; // Set active chat ID
+            const chatWindow = document.getElementById('chat-window');
+            chatWindow.innerHTML = ''; // Clear welcome message
+
+            // Highlight active history item
+            document.querySelectorAll('.history-item').forEach(item => {
+                item.classList.remove('active');
+                if (item.textContent.trim() === chat.title) {
+                    item.classList.add('active');
+                }
+            });
+
+            if (chat.arguments) {
+                chat.arguments.forEach(arg => {
+                    // User Message
+                    const userMsg = document.createElement('div');
+                    userMsg.className = 'message user-message';
+                    userMsg.innerHTML = `
+                        <div class="message-label">You</div>
+                        ${arg.raw_text.replace(/\n/g, '<br>')}
+                    `;
+                    chatWindow.appendChild(userMsg);
+
+                    // AI Message
+                    const aiMsg = document.createElement('div');
+                    aiMsg.className = 'message ai-message';
+                    
+                    // Handle both new (response) and old (toulmin_analysis) data structures
+                    let responseData = arg.response;
+                    if (!responseData && arg.toulmin_analysis) {
+                        responseData = arg.toulmin_analysis;
+                    }
+                    
+                    const mode = arg.mode_used || 'support'; // Default to support if missing
+
+                    if (mode === 'support') {
+                        // Support Mode Rendering
+                        // Check if responseData has elements (Toulmin)
+                        if (responseData && responseData.elements) {
+                             let fallaciesHtml = '';
+                             if (responseData.fallacies_present && responseData.fallacies_present.length > 0) {
+                                 fallaciesHtml = `<strong>Fallacies Detected:</strong> <span style="color: var(--accent-oppose);">${responseData.fallacies_present.join(', ')}</span><br><br>`;
+                             }
+
+                             aiMsg.innerHTML = `
+                                <div class="message-label">COGNIX • Support Mode</div>
+                                <strong>Analysis Complete</strong><br><br>
+                                ${fallaciesHtml}
+                                <strong>Claim:</strong> ${responseData.elements.claim?.text || 'N/A'}<br>
+                                <strong>Data:</strong> ${responseData.elements.data?.text || 'N/A'}<br>
+                                <strong>Warrant:</strong> ${responseData.elements.warrant?.text || 'N/A'}<br>
+                                <strong>Backing:</strong> ${responseData.elements.backing?.text || 'N/A'}<br>
+                                <strong>Qualifier:</strong> ${responseData.elements.qualifier?.text || 'N/A'}<br>
+                                <strong>Rebuttal:</strong> ${responseData.elements.rebuttal?.text || 'N/A'}<br><br>
+                                <strong>Improved Statement:</strong> ${responseData.improved_statement || 'N/A'}<br>
+                                <strong>Feedback:</strong> ${responseData.feedback || 'No feedback provided.'}
+                            `;
+                            
+                            // Update chart data with the latest argument's scores
+                             const scores = [
+                                responseData.elements.claim?.strength || 0,
+                                responseData.elements.data?.strength || 0,
+                                responseData.elements.warrant?.strength || 0,
+                                responseData.elements.backing?.strength || 0,
+                                responseData.elements.qualifier?.strength || 0,
+                                responseData.elements.rebuttal?.strength || 0
+                            ];
+                            // Scale 0-10 to 0-100
+                            currentData = scores.map(s => s * 10);
+                            
+                            // Update metrics
+                            currentMetrics = {
+                                fallacy: responseData.fallacy_resistance_score || 0,
+                                consistency: responseData.logical_consistency_score || 0,
+                                clarity: responseData.clarity_score || 0
+                            };
+                        } else {
+                             // Fallback if structure doesn't match
+                             aiMsg.innerHTML = `
+                                <div class="message-label">COGNIX • Support Mode</div>
+                                ${JSON.stringify(responseData)}
+                            `;
+                        }
+                       
+                    } else {
+                        // Defense Mode Rendering
+                        let content = responseData.response || responseData.raw_response || responseData.counter_argument || "I couldn't generate a counter-argument.";
+                        
+                        // Clean up JSON string if it leaked
+                        if (typeof content === 'string' && content.trim().startsWith('{')) {
+                            try {
+                                const parsed = JSON.parse(content);
+                                content = parsed.counter_argument || parsed.response || content;
+                            } catch (e) {}
+                        }
+
+                        aiMsg.innerHTML = `
+                            <div class="message-label">COGNIX • Defense Mode</div>
+                            <strong>Challenge Initiated</strong><br><br>
+                            ${content}
+                        `;
+                    }
+                    
+                    chatWindow.appendChild(aiMsg);
+                });
+                
+                chatWindow.scrollTop = chatWindow.scrollHeight;
+            }
+        }
+
+        // Initial setup
+        document.getElementById('send-btn').disabled = true;
+        // Set initial mode button icon
+        document.getElementById('mode-selector-btn').innerHTML = modeIcons[currentMode];
+        document.getElementById('mode-selector-btn').classList.add(currentMode);
+        
+        // Load history on start
+        loadChatHistory();
+    </script>
+</body>
+</html>

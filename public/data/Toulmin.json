@@ -1,0 +1,131 @@
+
+{
+  "toulmin_factors": [
+    {
+      "factor": "Claim",
+      "definition": "The main assertion or conclusion the arguer wants the audience to accept.",
+      "need": "A clear claim gives direction, reduces ambiguity, and allows evaluation of whether the argument holds.",
+      "fallacy_exploitation": "Vague, extreme, or overgeneralized claims enable faulty generalization, false dilemmas, or equivocation.",
+      "strong_qualifier": "Specific, bounded, and testable claim that states exactly what is being argued.",
+      "measurable_metrics": {
+        "specificity_score": "0–10 scale: clarity, absence of broad terms.",
+        "scope_precision": "0–10 scale: how well the claim avoids overgeneralization.",
+        "testability": "Boolean: Can the claim be verified or falsified?",
+        "ambiguity_index": "Count ambiguous words (e.g., 'many', 'everyone', 'better')."
+      },
+      "example": {
+        "weak": "Remote work is bad.",
+        "strong": "Remote work reduces in‑office collaboration for teams that rely on synchronous communication."
+      }
+    },
+    {
+      "factor": "Data",
+      "definition": "Evidence or facts that support the claim.",
+      "need": "Data grounds the claim in observable reality, increasing credibility and reducing skepticism.",
+      "fallacy_exploitation": "Cherry-picking data enables false causality, ad populum, and misleading statistics.",
+      "strong_qualifier": "Relevant, recent, verifiable data directly supporting the claim.",
+      "measurable_metrics": {
+        "relevance_score": "0–10: How directly the data supports the claim.",
+        "specificity": "Number of concrete data points.",
+        "source_credibility_score": "0–10: Source reliability.",
+        "replicability": "Boolean: evidence reproducible?"
+      },
+      "example": {
+        "weak": "People say remote work is better.",
+        "strong": "A 2023 Stanford study of 16,000 workers found remote workers were 13% more productive."
+      }
+    },
+    {
+      "factor": "Warrant",
+      "definition": "The logical connection explaining why the data supports the claim.",
+      "need": "It reveals the reasoning process, preventing hidden assumptions.",
+      "fallacy_exploitation": "When warrants are hidden or weak, arguments fall into false analogy, non sequitur, or hasty generalization.",
+      "strong_qualifier": "Transparent, logically valid rationale connecting evidence to claim.",
+      "measurable_metrics": {
+        "logical_validity": "0–10: Does the reasoning follow?",
+        "assumption_transparency": "Count of clearly stated assumptions.",
+        "coherence_score": "0–10: Clarity of logical progression.",
+        "fallacy_risk_index": "0–10: likelihood that the warrant contains a known fallacy."
+      },
+      "example": {
+        "weak": "Remote work is better because people like it.",
+        "strong": "If employees perform better with fewer interruptions (data), then remote work increases productivity (claim) because it reduces workplace distractions (warrant)."
+      }
+    },
+    {
+      "factor": "Backing",
+      "definition": "Additional justification supporting the warrant, often theoretical, scientific, or institutional.",
+      "need": "Backing strengthens the legitimacy of the warrant and preempts doubt.",
+      "fallacy_exploitation": "Fake authority, false credibility, or irrelevant expertise can weaken backing.",
+      "strong_qualifier": "Reliable research, expert consensus, or foundational principles validating the reasoning.",
+      "measurable_metrics": {
+        "source_authority": "0–10 based on credentials or institutional reliability.",
+        "evidence_depth": "Count of supporting sources.",
+        "expertise_relevance": "0–10: Alignment between expert domain and claim.",
+        "consensus_level": "0–10: Strength of agreement in the field."
+      },
+      "example": {
+        "weak": "My friend says remote work is productive.",
+        "strong": "Organizational psychology research demonstrates that autonomy increases task performance (Deci & Ryan, 2000)."
+      }
+    },
+    {
+      "factor": "Qualifier",
+      "definition": "Statements that limit the claim and express the degree of certainty.",
+      "need": "Signals honesty, reduces overclaiming, and increases trustworthiness.",
+      "fallacy_exploitation": "Absolute claims create openings for false dilemmas or easy refutation.",
+      "strong_qualifier": "Moderate, precise qualifiers such as 'likely', 'in most cases', or 'under these conditions'.",
+      "measurable_metrics": {
+        "certainty_modulation": "0–10: Appropriate use of hedging.",
+        "overclaim_index": "Count of absolute terms: 'always', 'never', etc.",
+        "contextual_precision": "0–10: Definition of conditions under which claim applies.",
+        "risk_acknowledgment": "Boolean: Does the argument acknowledge exceptions?"
+      },
+      "example": {
+        "weak": "Remote work is always better for productivity.",
+        "strong": "Remote work is likely more productive for tasks requiring long, uninterrupted focus."
+      }
+    },
+    {
+      "factor": "Rebuttal",
+      "definition": "Conditions under which the claim would not hold; acknowledgment of counterarguments.",
+      "need": "Demonstrates fairness and thinking depth; lowers the opponent’s attack surface.",
+      "fallacy_exploitation": "Ignoring rebuttals leads to strawman arguments, fallacy of extension, or intentional fallacy.",
+      "strong_qualifier": "Explicit recognition of alternative views with grounded reasoning.",
+      "measurable_metrics": {
+        "counterargument_accuracy": "0–10: Does the rebuttal represent opposing views fairly?",
+        "scope_completeness": "Count of addressed counterarguments.",
+        "strength_of_refutation": "0–10: Quality of reasoning in addressing counterarguments.",
+        "bias_index": "Presence/absence of ad hominem or emotional dismissals."
+      },
+      "example": {
+        "weak": "Opponents don't understand workplace productivity.",
+        "strong": "Remote work may reduce collaboration for creative teams, but hybrid structures can balance productivity with coordination."
+      }
+    }
+  ],
+  "references": [
+    {
+      "title": "The Uses of Argument",
+      "author": "Stephen Toulmin",
+      "year": 1958,
+      "link": "https://philpapers.org/rec/TOUTUO-2"
+    },
+    {
+      "title": "Cognitive Ease and Judgment",
+      "author": "Daniel Kahneman",
+      "year": 2011,
+      "link": "https://scholar.google.com/scholar?q=processing+fluency+kahneman"
+    },
+    {
+      "title": "Argumentation Theory",
+      "author": "van Eemeren & Grootendorst",
+      "link": "https://scholar.google.com/scholar?q=pragma+dialectics+eemeren"
+    },
+    {
+      "title": "Social Judgement and Persuasion",
+      "author": "Cialdini",
+      "link": "https://scholar.google.com/scholar?q=Cialdini+persuasion+principles"
+    }
+  ]
+}

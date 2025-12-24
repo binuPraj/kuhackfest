@@ -1,0 +1,50 @@
+{
+  "manifest_version": 3,
+  "name": "Reasoning Assistant",
+  "version": "1.0.0",
+  "description": "A Grammarly-like assistant for logical reasoning and argument quality",
+  "permissions": [
+    "storage",
+    "activeTab"
+  ],
+  "host_permissions": [
+    "http://localhost:3000/*",
+    "http://localhost:5001/*",
+    "https://twitter.com/*",
+    "https://x.com/*",
+    "https://facebook.com/*",
+    "https://www.facebook.com/*",
+    "https://instagram.com/*",
+    "https://www.instagram.com/*",
+    "https://linkedin.com/*",
+    "https://www.linkedin.com/*",
+    "https://reddit.com/*",
+    "https://www.reddit.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "css": ["styles.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": "icons/icon.svg"
+  },
+  "icons": {
+    "16": "icons/icon.svg",
+    "48": "icons/icon.svg",
+    "128": "icons/icon.svg"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["styles.css"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}

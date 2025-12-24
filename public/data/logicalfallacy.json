@@ -1,0 +1,213 @@
+
+{
+  "fallacies": [
+    {
+      "id": "faulty-generalization",
+      "name": "Faulty Generalization",
+      "alias": "Jumping to Conclusions",
+      "description": "Drawing a broad conclusion about a whole group based on too few or unrepresentative examples.",
+      "examples": [
+        {
+          "scenario": "I met a tall man who loved to eat cheese. Now I believe that all tall people like cheese.",
+          "explanation": "This is an example of Faulty Generalization because it fits the definition: Drawing a broad conclusion about a whole group based on too few or unrepresentative examples."
+        },
+        {
+          "scenario": "Today is so cold, so I don't believe in global warming.",
+          "explanation": "This is an example of Faulty Generalization because it fits the definition: Drawing a broad conclusion about a whole group based on too few or unrepresentative examples."
+        }
+      ]
+    },
+    {
+      "id": "ad-hominem",
+      "name": "Ad Hominem",
+      "alias": "Personal Attack",
+      "description": "Attacking the person making an argument instead of addressing the argument itself.",
+      "examples": [
+        {
+          "scenario": "What can our new math teacher know? Have you seen how fat she is?",
+          "explanation": "This is an example of Ad Hominem because it fits the definition: Attacking the person making an argument instead of addressing the argument itself."
+        }
+      ]
+    },
+    {
+      "id": "ad-populum",
+      "name": "Ad Populum",
+      "alias": "Bandwagon Fallacy",
+      "description": "Claiming something is true or good just because many people believe it or do it.",
+      "examples": [
+        {
+          "scenario": "I cannot listen to anyone who does not share my social and political values.",
+          "explanation": "This is an example of Ad Populum because it fits the definition: Claiming something is true or good just because many people believe it or do it."
+        },
+        {
+          "scenario": "Everyone should like coffee: 95% of teachers do!",
+          "explanation": "This is an example of Ad Populum because it fits the definition: Claiming something is true or good just because many people believe it or do it."
+        },
+        {
+          "scenario": "Killing thousands of people as a result of drug war campaign is not a crime to humanity because millions of Filipino support it.",
+          "explanation": "This is an example of Ad Populum because it fits the definition: Claiming something is true or good just because many people believe it or do it."
+        }
+      ]
+    },
+    {
+      "id": "false-causality",
+      "name": "False Causality",
+      "alias": "False Cause",
+      "description": "Assuming that because two things happen together, one must cause the other.",
+      "examples": [
+        {
+          "scenario": "Every time I wash my car; it rains. Me washing my car has a definite effect on the weather.",
+          "explanation": "This is an example of False Causality because it fits the definition: Assuming that because two things happen together, one must cause the other."
+        },
+        {
+          "scenario": "Every severe recession follows a Republican Presidency; therefore Republicans are the cause of recessions.",
+          "explanation": "This is an example of False Causality because it fits the definition: Assuming that because two things happen together, one must cause the other."
+        }
+      ]
+    },
+    {
+      "id": "circular-claim",
+      "name": "Circular Claim",
+      "alias": "Begging the Question",
+      "description": "Restating your conclusion as a reason for believing it, without providing real evidence.",
+      "examples": [
+        {
+          "scenario": "J.K. Rowling is a wonderful writer because she writes so well.",
+          "explanation": "This is an example of Circular Claim because it fits the definition: Restating your conclusion as a reason for believing it, without providing real evidence."
+        },
+        {
+          "scenario": "She is the best candidate for president because she is better than the other candidates!",
+          "explanation": "This is an example of Circular Claim because it fits the definition: Restating your conclusion as a reason for believing it, without providing real evidence."
+        }
+      ]
+    },
+    {
+      "id": "appeal-to-emotion",
+      "name": "Appeal to Emotion",
+      "alias": "Emotional Manipulation",
+      "description": "Using emotional language instead of evidence to persuade people.",
+      "examples": [
+        {
+          "scenario": "It is an outrage that the school wants to remove the vending machines. This is taking our freedom away!",
+          "explanation": "This is an example of Appeal to Emotion because it fits the definition: Using emotional language instead of evidence to persuade people."
+        },
+        {
+          "scenario": "Vaccines are so unnatural; it's disgusting that people are willing to put something like that in their body.",
+          "explanation": "This is an example of Appeal to Emotion because it fits the definition: Using emotional language instead of evidence to persuade people."
+        }
+      ]
+    },
+    {
+      "id": "fallacy-of-relevance",
+      "name": "Fallacy of Relevance",
+      "alias": "Missing the Point",
+      "description": "Bringing up information that doesn't logically connect to the argument being made.",
+      "examples": [
+        {
+          "scenario": "Why are you worried about poverty? Look how many children we abort every day.",
+          "explanation": "This is an example of Fallacy of Relevance because it fits the definition: Bringing up information that doesn't logically connect to the argument being made."
+        },
+        {
+          "scenario": "Why should we be worrying about how the government treats Native people, when people in our city can't get a job",
+          "explanation": "This is an example of Fallacy of Relevance because it fits the definition: Bringing up information that doesn't logically connect to the argument being made."
+        }
+      ]
+    },
+    {
+      "id": "deductive-fallacy",
+      "name": "Deductive Fallacy",
+      "alias": "Flawed Logic",
+      "description": "Making a mistake in the logical structure of an argument so the conclusion doesn't really follow.",
+      "examples": [
+        {
+          "scenario": "It is possible to fake the moon landing through special effects. Therefore, the moon landing was a fake using special effects.",
+          "explanation": "This is an example of Deductive Fallacy because it fits the definition: Making a mistake in the logical structure of an argument so the conclusion doesn't really follow."
+        },
+        {
+          "scenario": "Guns are like hammers\u00e2\u20ac\u201dthey're both tools with metal parts that could be used to kill someone. And yet it would be ridiculous to restrict the purchase of hammers, so restrictions on purchasing guns are equally ridiculous.",
+          "explanation": "This is an example of Deductive Fallacy because it fits the definition: Making a mistake in the logical structure of an argument so the conclusion doesn't really follow."
+        }
+      ]
+    },
+    {
+      "id": "intentional-fallacy",
+      "name": "Intentional Fallacy",
+      "alias": "Argument from Ignorance",
+      "description": "Claiming something must be true because it hasn't been proven false, or vice versa.",
+      "examples": [
+        {
+          "scenario": "No one has ever been able to prove that extraterrestrials exist, so they must not be real.",
+          "explanation": "This is an example of Intentional Fallacy because it fits the definition: Claiming something must be true because it hasn't been proven false, or vice versa."
+        },
+        {
+          "scenario": "It's common sense that if you smack your children, they will stop the bad behavior. So don't tell me not to hit my kids.",
+          "explanation": "This is an example of Intentional Fallacy because it fits the definition: Claiming something must be true because it hasn't been proven false, or vice versa."
+        }
+      ]
+    },
+    {
+      "id": "fallacy-of-extension",
+      "name": "Fallacy of Extension",
+      "alias": "Exaggeration or Distortion",
+      "description": "Misrepresenting or exaggerating someone's position to make it easier to attack.",
+      "examples": [
+        {
+          "scenario": "Their support of the discussion of sexual orientation issues is dangerous: they advocate for the exposure of children to sexually explicit materials, which is wrong.",
+          "explanation": "This is an example of Fallacy of Extension because it fits the definition: Misrepresenting or exaggerating someone's position to make it easier to attack."
+        },
+        {
+          "scenario": "They say we should cut back the defense budget. Their position is that they want to leave our nation completely defenseless!",
+          "explanation": "This is an example of Fallacy of Extension because it fits the definition: Misrepresenting or exaggerating someone's position to make it easier to attack."
+        }
+      ]
+    },
+    {
+      "id": "false-dilemma",
+      "name": "False Dilemma",
+      "alias": "Either/Or Fallacy",
+      "description": "Presenting only two options when more actually exist.",
+      "examples": [
+        {
+          "scenario": "You're either for the war or against the troops.",
+          "explanation": "This is an example of False Dilemma because it fits the definition: Presenting only two options when more actually exist."
+        },
+        {
+          "scenario": "I don't want to give up my car, so I don't think I can support fighting climate change.",
+          "explanation": "This is an example of False Dilemma because it fits the definition: Presenting only two options when more actually exist."
+        }
+      ]
+    },
+    {
+      "id": "fallacy-of-credibility",
+      "name": "Fallacy of Credibility",
+      "alias": "Appeal to False Authority",
+      "description": "Using an authority figure as evidence in an area outside their actual expertise.",
+      "examples": [
+        {
+          "scenario": "My professor, who has a Ph.D. in Astronomy, once told me that ghosts are real. Therefore, ghosts are real.",
+          "explanation": "This is an example of Fallacy of Credibility because it fits the definition: Using an authority figure as evidence in an area outside their actual expertise."
+        },
+        {
+          "scenario": "My minister says the Covid vaccine will cause genetic mutations. He has a college degree, and is a holy man, so he must be right.",
+          "explanation": "This is an example of Fallacy of Credibility because it fits the definition: Using an authority figure as evidence in an area outside their actual expertise."
+        }
+      ]
+    },
+    {
+      "id": "equivocation",
+      "name": "Equivocation",
+      "alias": "Word Game",
+      "description": "Using the same word with different meanings in an argument, often to confuse or mislead.",
+      "examples": [
+        {
+          "scenario": "I don't see how you can say you're an ethical person. It's so hard to get you to do anything: your work ethic is so bad",
+          "explanation": "This is an example of Equivocation because it fits the definition: Using the same word with different meanings in an argument, often to confuse or mislead."
+        },
+        {
+          "scenario": "It is immoral to kill an innocent human being. Fetuses are innocent human beings. Therefore, it is immoral to kill fetuses.",
+          "explanation": "This is an example of Equivocation because it fits the definition: Using the same word with different meanings in an argument, often to confuse or mislead."
+        }
+      ]
+    }
+  ]
+}
