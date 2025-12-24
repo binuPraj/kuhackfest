@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en" data-theme="auto">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Chatbot UI (Standalone)</title>
+    <meta name="description" content="Lightweight chatbot UI with HTML, CSS, and JS" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app">
+      <header class="app__header" role="banner">
+        <div class="brand">
+          <div class="brand__logo" aria-hidden="true">💬</div>
+          <div class="brand__text">
+            <h1 class="brand__title">Chatbot</h1>
+            <p class="brand__subtitle">Standalone HTML • CSS • JS</p>
+          </div>
+        </div>
+        <div class="header__actions">
+          <button id="themeToggle" class="icon-btn" type="button" aria-label="Toggle theme" title="Toggle theme">
+            <span class="icon" aria-hidden="true">🌙</span>
+          </button>
+          <button id="clearChat" class="icon-btn" type="button" aria-label="Clear chat" title="Clear chat">🗑️</button>
+        </div>
+      </header>
+
+      <main class="chat" id="chat" aria-live="polite" aria-label="Chat conversation" tabindex="0"></main>
+
+      <div id="typing" class="typing" aria-hidden="true">
+        <div class="typing__avatar">🤖</div>
+        <div class="typing__bubble" aria-label="Assistant is typing">
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+
+      <form id="composer" class="composer" aria-label="Message composer">
+        <label class="sr-only" for="message">Your message</label>
+        <textarea
+          id="message"
+          class="composer__input"
+          placeholder="Type a message..."
+          rows="1"
+          spellcheck="true"
+          autocomplete="off"
+        ></textarea>
+        <div class="composer__actions">
+          <button id="send" class="send-btn" type="submit" aria-label="Send message">
+            <span class="send-btn__icon" aria-hidden="true">➤</span>
+            <span class="send-btn__text">Send</span>
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+  </html>
