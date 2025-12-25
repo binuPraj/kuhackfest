@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>COGNIX - Reasoning Assistant</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600&display=swap');
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      width: 320px;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(180deg, #faf8f5 0%, #f5f1eb 100%);
+      color: #2d2a26;
+    }
+    
+    .container {
+      padding: 20px;
+    }
+    
+    /* Header */
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #e8e2d8;
+    }
+    
+    .logo-icon {
+      width: 48px;
+      height: 48px;
+      margin: 0 auto 12px;
+      background: linear-gradient(135deg, #c75a2a 0%, #a04820 100%);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(199, 90, 42, 0.25);
+    }
+    
+    .logo-icon img {
+      width: 32px;
+      height: 32px;
+    }
+    
+    .logo-icon::after {
+      content: '🔍';
+      font-size: 24px;
+    }
+    
+    h1 {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: 20px;
+      font-weight: 700;
+      color: #2d2a26;
+      margin-bottom: 4px;
+      letter-spacing: -0.3px;
+    }
+    
+    .tagline {
+      font-size: 12px;
+      color: #7a756d;
+    }
+    
+    .status-badge {
+      display: inline-block;
+      padding: 5px 14px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      margin-top: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    
+    .status-active {
+      background: linear-gradient(135deg, #5a8f5a 0%, #4a7a4a 100%);
+      color: white;
+      box-shadow: 0 2px 8px rgba(90, 143, 90, 0.3);
+    }
+    
+    .status-inactive {
+      background: #b44040;
+      color: white;
+    }
+    
+    /* Controls Panel */
+    .controls {
+      background: #ffffff;
+      border: 1px solid #e8e2d8;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 14px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    }
+    
+    .control-group {
+      padding: 12px 0;
+      border-bottom: 1px solid #f0ebe3;
+    }
+    
+    .control-group:first-child {
+      padding-top: 0;
+    }
+    
+    .control-group:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+    
+    label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 13px;
+      font-weight: 500;
+      color: #2d2a26;
+    }
+    
+    input[type="checkbox"] {
+      display: none;
+    }
+    
+    .toggle-container {
+      position: relative;
+      cursor: pointer;
+    }
+    
+    .toggle-switch {
+      position: relative;
+      width: 44px;
+      height: 24px;
+      background: #d4cfc5;
+      border-radius: 12px;
+      transition: background 0.3s ease;
+    }
+    
+    .toggle-switch.active {
+      background: linear-gradient(135deg, #c75a2a 0%, #a04820 100%);
+    }
+    
+    .toggle-switch::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 20px;
+      height: 20px;
+      background: white;
+      border-radius: 50%;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+    }
+    
+    .toggle-switch.active::after {
+      transform: translateX(20px);
+      box-shadow: 0 2px 6px rgba(199, 90, 42, 0.3);
+    }
+    
+    .mode-badge {
+      font-size: 11px;
+      font-weight: 600;
+      background: linear-gradient(135deg, #c75a2a 0%, #a04820 100%);
+      color: white;
+      padding: 4px 10px;
+      border-radius: 12px;
+    }
+    
+    .mode-info {
+      margin-top: 8px;
+      padding: 10px 12px;
+      background: #faf8f5;
+      border: 1px solid #e8e2d8;
+      border-radius: 8px;
+      font-size: 11px;
+      line-height: 1.5;
+      color: #5c564d;
+    }
+    
+    .toggle-hint {
+      font-size: 11px;
+      color: #9a948a;
+      margin-top: 4px;
+    }
+    
+    /* Test Button */
+    button {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, #c75a2a 0%, #a04820 100%);
+      border: none;
+      border-radius: 10px;
+      color: white;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      box-shadow: 0 3px 10px rgba(199, 90, 42, 0.25);
+      letter-spacing: 0.3px;
+    }
+    
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 16px rgba(199, 90, 42, 0.35);
+    }
+    
+    button:active {
+      transform: translateY(0);
+    }
+    
+    /* Footer */
+    .footer {
+      text-align: center;
+      padding: 14px;
+      font-size: 11px;
+      color: #9a948a;
+    }
+    
+    .footer span {
+      color: #c75a2a;
+    }
+    
+    /* Notification */
+    .notification {
+      position: fixed;
+      top: 16px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #5a8f5a;
+      color: white;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      box-shadow: 0 4px 12px rgba(90, 143, 90, 0.3);
+      animation: slideDown 0.3s ease;
+    }
+    
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="logo-icon"></div>
+      <h1>COGNIX</h1>
+      <p class="tagline">Think clearer, argue better</p>
+      <div id="status" class="status-badge status-active">Active</div>
+    </div>
+    
+    <div class="controls">
+      <div class="control-group">
+        <label>
+          <span>Enable Extension</span>
+          <div class="toggle-container">
+            <input type="checkbox" id="enableToggle" checked>
+            <div class="toggle-switch active"></div>
+          </div>
+        </label>
+      </div>
+      
+      <div class="control-group">
+        <label>
+          <span>Real-time Detection</span>
+          <div class="toggle-container">
+            <input type="checkbox" id="detectionToggle" checked>
+            <div class="toggle-switch active"></div>
+          </div>
+        </label>
+        <div class="toggle-hint">Analyze text fields as you type</div>
+      </div>
+      
+      <div class="control-group">
+        <label>
+          <span>Floating Chatbot</span>
+          <div class="toggle-container">
+            <input type="checkbox" id="chatbotToggle" checked>
+            <div class="toggle-switch active"></div>
+          </div>
+        </label>
+        <div class="toggle-hint">Chat icon for quick argument analysis</div>
+      </div>
+      
+      <div class="control-group">
+        <label>
+          <span>Mode</span>
+          <span id="currentMode" class="mode-badge">✍️ Writing</span>
+        </label>
+        <div id="modeInfo" class="mode-info">
+          Mode is auto-detected: Writing for new posts, Reply for comments.
+        </div>
+      </div>
+      
+      <div class="control-group">
+        <label>
+          <span>Show Suggestions</span>
+          <div class="toggle-container">
+            <input type="checkbox" id="suggestionsToggle" checked>
+            <div class="toggle-switch active"></div>
+          </div>
+        </label>
+      </div>
+    </div>
+    
+    <button id="testBtn">Test Extension</button>
+    
+    <div class="footer">
+      Made with <span>♥</span> for KU Hackfest 2025
+    </div>
+  </div>
+  
+  <script>
+    // Handle toggle switch clicks
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.toggle-container').forEach(container => {
+        container.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          
+          const checkbox = this.querySelector('input[type="checkbox"]');
+          const toggleSwitch = this.querySelector('.toggle-switch');
+          
+          checkbox.checked = !checkbox.checked;
+          toggleSwitch.classList.toggle('active', checkbox.checked);
+          
+          // Trigger change event
+          checkbox.dispatchEvent(new Event('change', { bubbles: true }));
+        });
+      });
+    });
+  </script>
+  <script src="popup.js"></script>
+</body>
+</html>

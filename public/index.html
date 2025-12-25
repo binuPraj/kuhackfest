@@ -1,0 +1,451 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>COGNIX - AI Fallacy Detector & Reasoning Coach</title>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔍</text></svg>">
+</head>
+<body>
+    
+  <!-- Updated Navigation Section -->
+    <nav class="navbar" id="navbar">
+    <div class="nav-container">
+        <a href="index.html" class="logo">
+        <span class="logo-icon">🔍</span>
+        COGNIX
+        </a>
+        
+        <ul class="nav-links">
+        <li><a href="#home">Home</a></li>
+        <li><a href="#features">Features</a></li>
+        <li><a href="#modes">Modes</a></li>
+        <li><a href="#audience">For You</a></li>
+        <li><a href="fallacies.html">Fallacies</a></li>
+        </ul>
+        
+        <div class="nav-actions">
+        <a href="login.html" class="nav-login">
+            <span>Login</span>
+        </a>
+        <a href="chat.html" class="nav-cta">
+            Try Demo
+            <span>→</span>
+        </a>
+        </div>
+        
+        <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+        <span></span>
+        <span></span>
+        <span></span>
+        </button>
+    </div>
+    </nav>
+
+  <!-- Hero Section - Retro Vintage Style -->
+  <section class="hero" id="home">
+    <!-- Retro Background Effects -->
+    <div class="hero-bg">
+      <div class="grain-overlay"></div>
+      <div class="scan-lines"></div>
+      <div class="retro-grid"></div>
+    </div>
+
+    <div class="hero-container">
+      <!-- Left Content -->
+      <div class="hero-content">
+        <div class="retro-badge">
+          <span class="badge-indicator"></span>
+          <span>AI-Powered Analysis</span>
+        </div>
+        
+        <h1 class="hero-title">
+          <span class="title-line">Sharpen Your</span>
+          <span class="title-line accent">Arguments.</span>
+          <span class="title-line">Spot the <em>Flaws.</em></span>
+        </h1>
+        
+        <p class="hero-subtitle">
+          Advanced logical fallacy detection covering 13 types, trained on 4000+ datasets. 
+          Build stronger arguments using the Toulmin argument standard or challenge weak ones with precision.
+        </p>
+        
+        <div class="hero-ctas">
+          <a href="chat.html" class="btn btn-retro-primary">
+            <span>Try Live Demo</span>
+            <span class="btn-arrow">→</span>
+          </a>
+          <a href="#features" class="btn btn-retro-secondary">
+            <span>Learn How It Works</span>
+          </a>
+        </div>
+      </div>
+      
+      <!-- Right Visual - Pinterest Collage Style -->
+      <div class="hero-visual">
+        <!-- Retro Stickers -->
+        <div class="retro-sticker sticker-1">AI-Powered!</div>
+        <div class="retro-sticker sticker-2">Free Demo</div>
+        
+        <div class="collage-grid">
+          <!-- Main Card (Polaroid Style) -->
+          <div class="collage-card card-main">
+            <div class="card-tape"></div>
+            <div class="card-content">
+              <span class="card-label">⚠ Fallacy Detected</span>
+              <h3>Ad Hominem</h3>
+              <p class="card-quote">"You can't trust his climate opinion—he's not even a scientist."</p>
+              <div class="confidence-dial">
+                <div class="dial-track">
+                  <div class="dial-fill" style="--fill: 87%"></div>
+                </div>
+                <span class="dial-value">87%</span>
+              </div>
+            </div>
+          </div>
+          
+          <!-- Small Card 1 -->
+          <div class="collage-card card-small card-1">
+            <div class="stamp stamp-warning">⚠</div>
+            <span>13 Fallacies</span>
+          </div>
+          
+          <!-- Small Card 2 -->
+          <div class="collage-card card-small card-2">
+            <div class="stamp stamp-success">✓</div>
+            <span>2 Modes</span>
+          </div>
+          
+          <!-- Analysis Card -->
+          <div class="collage-card card-analysis">
+            <div class="card-header-retro">
+              <span class="status-light"></span>
+              <span>Live Analysis</span>
+            </div>
+            <div class="typewriter-text">
+              <span>Analyzing argument structure...</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Content Sections -->
+  <main class="sections-container">
+    <div class="container">
+      
+      <!-- Section Header -->
+      <div class="section-header" id="features">
+        <span class="section-badge">✨ Features</span>
+        <h2 class="section-title">Built for Clear Thinking</h2>
+        <p class="section-subtitle">
+          Powerful AI tools designed to help you reason better, argue smarter, and think clearer.
+        </p>
+      </div>
+      
+      <!-- Masonry Grid -->
+      <div class="masonry-grid">
+        
+        <!-- Feature: Explainable Reasoning (Featured) -->
+        <div class="masonry-card card-featured">
+          <div class="card-icon">🧠</div>
+          <h3 class="card-title">Explainable Reasoning</h3>
+          <p class="card-description">
+            Every analysis comes with clear, step-by-step explanations. Understand not just what fallacy was detected, but why it matters and how the reasoning breaks down.
+          </p>
+          <ul class="feature-list">
+            <li>
+              <span class="check">✓</span>
+              <span>Detailed breakdown of logical structure</span>
+            </li>
+            <li>
+              <span class="check">✓</span>
+              <span>Plain-language explanations</span>
+            </li>
+            <li>
+              <span class="check">✓</span>
+              <span>Educational insights with each analysis</span>
+            </li>
+            <li>
+              <span class="check">✓</span>
+              <span>Links to learn more about each fallacy</span>
+            </li>
+          </ul>
+        </div>
+        
+        <!-- Feature: Argument Reconstruction -->
+        <div class="masonry-card">
+          <div class="card-icon">🔨</div>
+          <h3 class="card-title">Argument Reconstruction</h3>
+          <p class="card-description">
+            Don't just identify problems—fix them. Get AI-powered suggestions to rebuild your arguments on solid logical foundations.
+          </p>
+        </div>
+        
+        <!-- Feature: Emotion-Aware -->
+        <div class="masonry-card">
+          <div class="card-icon">💭</div>
+          <h3 class="card-title">Emotion-Aware Responses</h3>
+          <p class="card-description">
+            Our AI understands context and tone, providing feedback that's constructive and encouraging while remaining precise.
+          </p>
+        </div>
+        
+      </div>
+      
+      <!-- How It Works - Workflow Section -->
+      <div class="workflow-section" id="how-it-works">
+        <div class="section-header">
+          <span class="section-badge">⚡ Process</span>
+          <h2 class="section-title">How It Works</h2>
+          <p class="section-subtitle">
+            From input to insight in seconds. Our streamlined process helps you think clearer.
+          </p>
+        </div>
+        
+        <div class="workflow-container">
+          <!-- Step 1 -->
+          <div class="workflow-step">
+            <div class="step-number">1</div>
+            <div class="step-icon">📝</div>
+            <h4 class="step-title">Input Argument</h4>
+            <p class="step-desc">Paste or type your argument, statement, or text you want analyzed.</p>
+          </div>
+          
+          <div class="workflow-arrow">→</div>
+          
+          <!-- Step 2 -->
+          <div class="workflow-step">
+            <div class="step-number">2</div>
+            <div class="step-icon">🎯</div>
+            <h4 class="step-title">Choose Mode</h4>
+            <p class="step-desc">Select Support mode to strengthen or Oppose mode to challenge.</p>
+          </div>
+          
+          <div class="workflow-arrow">→</div>
+          
+          <!-- Step 3 -->
+          <div class="workflow-step">
+            <div class="step-number">3</div>
+            <div class="step-icon">🔍</div>
+            <h4 class="step-title">Detect Fallacy</h4>
+            <p class="step-desc">AI scans for logical fallacies and reasoning weaknesses.</p>
+          </div>
+          
+          <div class="workflow-arrow">→</div>
+          
+          <!-- Step 4 -->
+          <div class="workflow-step">
+            <div class="step-number">4</div>
+            <div class="step-icon">💡</div>
+            <h4 class="step-title">Explain & Adapt</h4>
+            <p class="step-desc">Get clear explanations and feedback tailored to your chosen mode.</p>
+          </div>
+          
+          <div class="workflow-arrow">→</div>
+          
+          <!-- Step 5 -->
+          <div class="workflow-step">
+            <div class="step-number">5</div>
+            <div class="step-icon">✨</div>
+            <h4 class="step-title">Improve Argument</h4>
+            <p class="step-desc">Get actionable suggestions to make your argument stronger.</p>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Continue Masonry Grid for Modes -->
+      <div class="masonry-grid" style="margin-top: var(--spacing-4xl);">
+        
+        <!-- Mode: Support (Tall Card) -->
+        <div class="masonry-card card-tall mode-card support" id="modes">
+          <span class="mode-tag">SUPPORT MODE</span>
+          <div class="card-icon">🤝</div>
+          <h3 class="card-title">Build Stronger Arguments</h3>
+          <p class="card-description">
+            Get constructive coaching to strengthen your reasoning. Perfect for refining essays, presentations, or debate prep.
+          </p>
+          <ul class="feature-list">
+            <li>
+              <span class="check">✓</span>
+              <span>Constructive feedback approach</span>
+            </li>
+            <li>
+              <span class="check">✓</span>
+              <span>Improvement suggestions</span>
+            </li>
+            <li>
+              <span class="check">✓</span>
+              <span>Strength identification</span>
+            </li>
+          </ul>
+        </div>
+        
+        <!-- Mode: Oppose -->
+        <div class="masonry-card card-tall mode-card oppose">
+          <span class="mode-tag">OPPOSE MODE</span>
+          <div class="card-icon">⚔️</div>
+          <h3 class="card-title">Challenge Any Argument</h3>
+          <p class="card-description">
+            Take a critical stance on any argument. Identify weaknesses, spot fallacies, and prepare counter-arguments.
+          </p>
+          <ul class="feature-list">
+            <li>
+              <span class="check">✓</span>
+              <span>Critical analysis mode</span>
+            </li>
+            <li>
+              <span class="check">✓</span>
+              <span>Weakness identification</span>
+            </li>
+            <li>
+              <span class="check">✓</span>
+              <span>Counter-argument generation</span>
+            </li>
+          </ul>
+        </div>
+        
+        <!-- Stats Card -->
+        <div class="masonry-card">
+          <div class="card-icon">📊</div>
+          <h3 class="card-title">By the Numbers</h3>
+          <div class="stats-grid">
+            <div class="stat-item">
+              <div class="stat-value">13</div>
+              <div class="stat-label">Fallacy Types</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">2</div>
+              <div class="stat-label">Analysis Modes</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">4000+</div>
+              <div class="stat-label">Used Datasets</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-value">Toulmin </div>
+              <div class="stat-label">Standard</div>
+            </div>
+          </div>
+        </div>
+        
+      </div>
+      
+      <!-- Audience Section -->
+      <section class="audience-section" id="audience">
+        <div class="section-header">
+          <span class="section-badge">👥 For You</span>
+          <h2 class="section-title">Who Is This For?</h2>
+          <p class="section-subtitle">
+            Whether you're learning, debating, or making critical decisions, COGNIX helps you think better.
+          </p>
+        </div>
+        
+        <div class="pinterest-masonry">
+          <!-- Audience: Students & Learners -->
+          <div class="pin-card">
+            <div class="pin-emoji">🎓</div>
+            <h3 class="pin-title">Students & Learners</h3>
+            <ul class="pin-benefits">
+              <li>Improve critical thinking</li>
+              <li>Write clearer arguments</li>
+              <li>Prepare for debates, exams, and essays</li>
+            </ul>
+            <p class="pin-quote">"Learn to spot flawed reasoning and strengthen your arguments."</p>
+          </div>
+          
+          <!-- Audience: Debaters & Public Speakers -->
+          <div class="pin-card pin-tall">
+            <div class="pin-emoji">🎤</div>
+            <h3 class="pin-title">Debaters & Speakers</h3>
+            <ul class="pin-benefits">
+              <li>Avoid common fallacies</li>
+              <li>Anticipate counter-arguments</li>
+              <li>Practice reasoning under pressure</li>
+              <li>Build persuasive cases</li>
+            </ul>
+            <p class="pin-quote">"Train your logic like a skill—before stepping into debates."</p>
+            <div class="pin-tag">Popular</div>
+          </div>
+          
+          <!-- Audience: Professionals & Leaders -->
+          <div class="pin-card">
+            <div class="pin-emoji">💼</div>
+            <h3 class="pin-title">Professionals & Leaders</h3>
+            <ul class="pin-benefits">
+              <li>Communicate clearly</li>
+              <li>Persuade without manipulation</li>
+              <li>Make sound decisions</li>
+            </ul>
+            <p class="pin-quote">"Make decisions and arguments grounded in logic, not emotion."</p>
+          </div>
+          
+          <!-- Audience: Content Creators & Writers -->
+          <div class="pin-card pin-tall">
+            <div class="pin-emoji">✍️</div>
+            <h3 class="pin-title">Creators & Writers</h3>
+            <ul class="pin-benefits">
+              <li>Craft persuasive narratives</li>
+              <li>Avoid misleading claims</li>
+              <li>Build trust through clarity</li>
+              <li>Create fact-based content</li>
+            </ul>
+            <p class="pin-quote">"Write content that convinces through clarity, not fallacy."</p>
+          </div>
+          
+          <!-- Audience: Educators & Mentors -->
+          <div class="pin-card">
+            <div class="pin-emoji">👩‍🏫</div>
+            <h3 class="pin-title">Educators & Mentors</h3>
+            <ul class="pin-benefits">
+              <li>Teach reasoning skills</li>
+              <li>Evaluate arguments objectively</li>
+              <li>Foster critical thinking</li>
+            </ul>
+            <p class="pin-quote">"A teaching assistant for logic and critical thinking."</p>
+          </div>
+          
+          <!-- Audience: Curious Thinkers -->
+          <div class="pin-card pin-featured">
+            <div class="pin-emoji">🧠</div>
+            <h3 class="pin-title">Curious Thinkers</h3>
+            <ul class="pin-benefits">
+              <li>Self-improvement mindset</li>
+              <li>Philosophy & psychology fans</li>
+              <li>Love exploring ideas</li>
+              <li>Seek intellectual growth</li>
+            </ul>
+            <p class="pin-quote">"Understand how thinking goes wrong—and how to fix it."</p>
+            <div class="pin-tag accent">For You</div>
+          </div>
+        </div>
+      </section>
+      
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-brand">
+        <a href="index.html" class="logo">
+          <span class="logo-icon">🔍</span>
+          COGNIX
+        </a>
+        <p>AI-powered logical reasoning analysis</p>
+      </div>
+      <div class="footer-links">
+        <a href="#features">Features</a>
+        <a href="#modes">Modes</a>
+        <a href="fallacies.html">Fallacies</a>
+        <a href="chat.html">Try Demo</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

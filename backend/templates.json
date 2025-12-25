@@ -1,0 +1,31 @@
+{
+  "extract_toulmin": {
+    "role": "argumentation_theory_expert",
+    "description": "Extract Toulmin argument elements and advanced metrics from a user argument",
+    "prompt": "You are an expert in argumentation theory.\n\nAnalyze the argument below using the Toulmin model and provide advanced scoring metrics.\n\nNOTE: Do NOT detect or analyze fallacies - this is handled separately by a local model.\n\nReturn ONLY valid JSON in this exact format:\n{\n  \"elements\": {\n    \"claim\": { \"text\": \"...\", \"strength\": 0 },\n    \"data\": { \"text\": \"...\", \"strength\": 0 },\n    \"warrant\": { \"text\": \"...\", \"strength\": 0 },\n    \"backing\": { \"text\": \"...\", \"strength\": 0 },\n    \"qualifier\": { \"text\": \"...\", \"strength\": 0 },\n    \"rebuttal\": { \"text\": \"...\", \"strength\": 0 }\n  },\n  \"logical_consistency_score\": 0,\n  \"clarity_score\": 0,\n  \"improved_statement\": \"...\",\n  \"feedback\": \"...\"\n}\n\nStrength scores should be 0-10.\nMetric scores (logical_consistency, clarity) should be 0-100.\n\nArgument:\n{{ARGUMENT_TEXT}}"
+  },
+
+  "support_mode": {
+    "role": "reasoning_coach",
+    "description": "Improve an argument by removing fallacies and strengthening Toulmin elements",
+    "prompt": "You are a reasoning coach.\n\nThe following argument contains logical fallacies or weak reasoning.\n\nYour tasks:\n1. Remove any logical fallacies.\n2. Strengthen missing or weak Toulmin elements.\n3. Preserve the original intent of the argument.\n\nReturn ONLY valid JSON in the following format:\n{\n  \"improved_argument\": \"\",\n  \"explanation\": \"\"\n}\n\nOriginal argument:\n{{ARGUMENT_TEXT}}\n\nDetected fallacy:\n{{FALLACY_TYPE}}"
+  },
+
+  "oppose_mode": {
+    "role": "debate_opponent",
+    "description": "Generate a counter-argument using intentional logical fallacies",
+    "prompt": "You are a debate opponent.\n\nGenerate a counter-argument to the user's claim.\n\nRules:\n- Intentionally use ONE logical fallacy.\n- Do NOT reveal or name the fallacy in the response.\n- Keep the argument realistic and persuasive.\n\nContext:\n{{CONTEXT}}\n\nUser's argument:\n{{ARGUMENT_TEXT}}"
+  },
+
+  "evaluate_user_response": {
+    "role": "critical_reasoning_evaluator",
+    "description": "Evaluate how well the user handled a fallacious argument",
+    "prompt": "You are evaluating a user's response to a fallacious argument.\n\nTasks:\n1. Identify the fallacy used in the opponent's argument.\n2. Determine whether the user successfully countered the fallacy.\n3. Score the user's Toulmin elements from 0 to 2.\n\nReturn ONLY valid JSON in the following format:\n{\n  \"detected_fallacy\": \"\",\n  \"user_countered_correctly\": true,\n  \"toulmin_scores\": {\n    \"claim\": 0,\n    \"data\": 0,\n    \"warrant\": 0,\n    \"backing\": 0,\n    \"qualifier\": 0,\n    \"rebuttal\": 0\n  },\n  \"overall_reasoning_score\": 0,\n  \"analysis_notes\": \"\"\n}\n\nOpponent argument:\n{{OPPONENT_ARGUMENT}}\n\nUser response:\n{{USER_RESPONSE}}"
+  },
+
+  "generate_title": {
+    "role": "summarizer",
+    "description": "Generate a short, concise title for a conversation based on the first argument",
+    "prompt": "Generate a short, concise title (max 5 words) for a conversation that starts with the following argument. Do not use quotes. Return ONLY the title text, nothing else.\n\nArgument:\n{{ARGUMENT_TEXT}}"
+  }
+}

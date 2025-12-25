@@ -1,0 +1,268 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logical Fallacies - LogicLens</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Retro theme colors matching hero.html */
+        body {
+            padding-top: 40px;
+            background: #faf8f5;
+            color: #2d2a26;
+            font-family: 'Space Grotesk', 'Segoe UI', Arial, sans-serif;
+            margin: 0;
+        }
+
+        .fallacy-list {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+
+        .fallacy-card {
+            background: #fffef9;
+            border-radius: 1rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 4px 4px 0 rgba(45, 42, 38, 0.1);
+            padding: 1.5rem 2rem;
+            position: relative;
+            border: 2px solid #b8b1a5;
+        }
+
+        .fallacy-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #d35400;
+            margin: 0;
+        }
+
+        .fallacy-alias {
+            color: #1a5276;
+            font-size: 1rem;
+            margin-left: 0.5rem;
+        }
+
+        .fallacy-desc {
+            margin: 0.5rem 0 1rem 0;
+            color: #5c564d;
+        }
+
+        .dropdown-btn {
+            background: #d35400;
+            color: white;
+            border: 2px solid #2d2a26;
+            border-radius: 0.5rem;
+            padding: 0.4rem 1rem;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.15s ease;
+            box-shadow: 3px 3px 0 #2d2a26;
+            font-weight: 600;
+        }
+
+        .dropdown-btn:hover {
+            background: #ba4a00;
+            transform: translate(1px, 1px);
+            box-shadow: 2px 2px 0 #2d2a26;
+        }
+
+        .examples-list {
+            display: none;
+            background: #ebe5db;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+            padding: 1rem;
+            border-left: 3px solid #d35400;
+        }
+
+        .examples-list.active {
+            display: block;
+        }
+
+        .example-scenario {
+            color: #2d2a26;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .example-explanation {
+            color: #5c564d;
+            font-size: 0.98rem;
+            margin-bottom: 1.2rem;
+            background: #f8f5ef;
+            padding: 0.5rem;
+            border-radius: 0.375rem;
+        }
+
+        .impact-section {
+            background: #fffef9;
+            border: 2px solid #b8b1a5;
+            border-radius: 1rem;
+            padding: 2rem 3rem;
+            margin: 3rem 0;
+            box-shadow: 4px 4px 0 rgba(45, 42, 38, 0.1);
+            max-width: 1000px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .impact-section h2 {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: #d35400;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .impact-content p {
+            color: #5c564d;
+            line-height: 1.8;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+        }
+
+        .impact-content p:last-child {
+            margin-bottom: 0;
+        }
+    </style>
+</head>
+
+<body>
+
+
+    <!-- Updated Navigation Section -->
+    <nav class="navbar" id="navbar">
+    <div class="nav-container">
+        <a href="index.html" class="logo">
+        <span class="logo-icon">🔍</span>
+        LogicLens
+        </a>
+        
+        <ul class="nav-links">
+        <li><a href="#home">Home</a></li>
+        <li><a href="#features">Features</a></li>
+        <li><a href="#modes">Modes</a></li>
+        <li><a href="#audience">For You</a></li>
+        <li><a href="fallacies.html">Fallacies</a></li>
+        </ul>
+        
+        <div class="nav-actions">
+        <a href="login.html" class="nav-login">
+            <span>Login</span>
+        </a>
+        <a href="chat.html" class="nav-cta">
+            Try Demo
+            <span>→</span>
+        </a>
+        </div>
+        
+        <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+        <span></span>
+        <span></span>
+        <span></span>
+        </button>
+    </div>
+    </nav>
+
+
+
+    <section class="fallacy-list" id="fallacies">
+        <h1 style="color:#ffb86c; text-align:center; margin-bottom:2rem;">Logical Fallacies</h1>
+        <!-- Fallacies will be injected here -->
+    </section>
+
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+        <div class="footer-brand">
+            <a href="index.html" class="logo">
+            <span class="logo-icon">🔍</span>
+            LogicLens
+            </a>
+            <p>AI-powered logical reasoning analysis</p>
+        </div>
+        <div class="footer-links">
+            <a href="#features">Features</a>
+            <a href="#modes">Modes</a>
+            <a href="fallacies.html">Fallacies</a>
+            <a href="chat.html">Try Demo</a>
+        </div>
+        </div>
+    </footer>
+
+
+
+    <script>
+        // Fallacies data (from logicalfallacy.json)
+        const fallacies = [
+            { "id": "faulty-generalization", "name": "Faulty Generalization", "alias": "Jumping to Conclusions", "description": "Drawing broad conclusions about an entire group or category based on insufficient or unrepresentative examples. This happens when you take limited personal experiences or anecdotal evidence and treat them as universal truth.", "percentage": "18.01%", "examples": [{ "scenario": "I met a tall man who loved to eat cheese. Now I believe that all tall people like cheese.", "explanation": "This is an example of Faulty Generalization because it fits the definition: Drawing a broad conclusion about a whole group based on too few or unrepresentative examples." }, { "scenario": "Today is so cold, so I don't believe in global warming.", "explanation": "This is an example of Faulty Generalization because it fits the definition: Drawing a broad conclusion about a whole group based on too few or unrepresentative examples." }] },
+            { "id": "ad-hominem", "name": "Ad Hominem", "alias": "Personal Attack", "description": "Attacking the character, personal traits, or circumstances of someone making an argument rather than addressing the substance of their argument itself. It's a diversion tactic that shifts focus from ideas to personalities.", "percentage": "12.33%", "examples": [{ "scenario": "What can our new math teacher know? Have you seen how fat she is?", "explanation": "This is an example of Ad Hominem because it fits the definition: Attacking the person making an argument instead of addressing the argument itself." }] },
+            { "id": "ad-populum", "name": "Ad Populum", "alias": "Bandwagon Fallacy", "description": "Claiming something is true, good, or correct simply because many people believe it or it's popular. This fallacy confuses popularity with validity, assuming that widespread belief equals truth regardless of actual evidence.", "percentage": "9.47%", "examples": [{ "scenario": "I cannot listen to anyone who does not share my social and political values.", "explanation": "This is an example of Ad Populum because it fits the definition: Claiming something is true or good just because many people believe it or do it." }, { "scenario": "Everyone should like coffee: 95% of teachers do!", "explanation": "This is an example of Ad Populum because it fits the definition: Claiming something is true or good just because many people believe it or do it." }, { "scenario": "Killing thousands of people as a result of drug war campaign is not a crime to humanity because millions of Filipino support it.", "explanation": "This is an example of Ad Populum because it fits the definition: Claiming something is true or good just because many people believe it or do it." }] },
+            { "id": "false-causality", "name": "False Causality", "alias": "False Cause", "description": "Assuming that because two events occur together or in sequence, one must have caused the other. This mistake ignores other possible explanations like coincidence, hidden factors, or reverse causation.", "percentage": "8.82%", "examples": [{ "scenario": "Every time I wash my car; it rains. Me washing my car has a definite effect on the weather.", "explanation": "This is an example of False Causality because it fits the definition: Assuming that because two things happen together, one must cause the other." }, { "scenario": "Every severe recession follows a Republican Presidency; therefore Republicans are the cause of recessions.", "explanation": "This is an example of False Causality because it fits the definition: Assuming that because two things happen together, one must cause the other." }] },
+            { "id": "circular-claim", "name": "Circular Claim", "alias": "Begging the Question", "description": "A type of reasoning where the conclusion is essentially restated as one of the premises, creating a loop that goes nowhere. The argument assumes what it's trying to prove, offering no actual evidence or justification.", "percentage": "6.98%", "examples": [{ "scenario": "J.K. Rowling is a wonderful writer because she writes so well.", "explanation": "This is an example of Circular Claim because it fits the definition: Restating your conclusion as a reason for believing it, without providing real evidence." }, { "scenario": "She is the best candidate for president because she is better than the other candidates!", "explanation": "This is an example of Circular Claim because it fits the definition: Restating your conclusion as a reason for believing it, without providing real evidence." }] },
+            { "id": "appeal-to-emotion", "name": "Appeal to Emotion", "alias": "Emotional Manipulation", "description": "Attempting to persuade through emotional manipulation rather than logical reasoning. This uses strong feelings like fear, outrage, pity, or excitement to bypass critical thinking and evidence evaluation.", "percentage": "6.82%", "examples": [{ "scenario": "It is an outrage that the school wants to remove the vending machines. This is taking our freedom away!", "explanation": "This is an example of Appeal to Emotion because it fits the definition: Using emotional language instead of evidence to persuade people." }, { "scenario": "Vaccines are so unnatural; it's disgusting that people are willing to put something like that in their body.", "explanation": "This is an example of Appeal to Emotion because it fits the definition: Using emotional language instead of evidence to persuade people." }] },
+            { "id": "fallacy-of-relevance", "name": "Fallacy of Relevance", "alias": "Missing the Point", "description": "Introducing information or arguments that don't logically connect to the issue being discussed. These distractions might be emotionally compelling but don't actually address the original claim or evidence.", "percentage": "6.61%", "examples": [{ "scenario": "Why are you worried about poverty? Look how many children we abort every day.", "explanation": "This is an example of Fallacy of Relevance because it fits the definition: Bringing up information that doesn't logically connect to the argument being made." }, { "scenario": "Why should we be worrying about how the government treats Native people, when people in our city can't get a job", "explanation": "This is an example of Fallacy of Relevance because it fits the definition: Bringing up information that doesn't logically connect to the argument being made." }] },
+            { "id": "deductive-fallacy", "name": "Deductive Fallacy", "alias": "Flawed Logic", "description": "An error in the logical structure of an argument where the conclusion doesn't properly follow from the premises, even if those premises are true. This breaks the rules of valid reasoning patterns.", "percentage": "6.21%", "examples": [{ "scenario": "It is possible to fake the moon landing through special effects. Therefore, the moon landing was a fake using special effects.", "explanation": "This is an example of Deductive Fallacy because it fits the definition: Making a mistake in the logical structure of an argument so the conclusion doesn't really follow." }, { "scenario": "Guns are like hammers—they're both tools with metal parts that could be used to kill someone. And yet it would be ridiculous to restrict the purchase of hammers, so restrictions on purchasing guns are equally ridiculous.", "explanation": "This is an example of Deductive Fallacy because it fits the definition: Making a mistake in the logical structure of an argument so the conclusion doesn't really follow." }] },
+            { "id": "intentional-fallacy", "name": "Intentional Fallacy", "alias": "Argument from Ignorance", "description": "Claiming something must be true (or false) simply because it hasn't been proven otherwise. This wrongly shifts the burden of proof and treats absence of evidence as evidence of absence (or presence).", "percentage": "5.84%", "examples": [{ "scenario": "No one has ever been able to prove that extraterrestrials exist, so they must not be real.", "explanation": "This is an example of Intentional Fallacy because it fits the definition: Claiming something must be true because it hasn't been proven false, or vice versa." }, { "scenario": "It's common sense that if you smack your children, they will stop the bad behavior. So don't tell me not to hit my kids.", "explanation": "This is an example of Intentional Fallacy because it fits the definition: Claiming something must be true because it hasn't been proven false, or vice versa." }] },
+            { "id": "fallacy-of-extension", "name": "Fallacy of Extension", "alias": "Exaggeration or Distortion", "description": "Misrepresenting or exaggerating someone's position to make it easier to attack. This often involves taking a reasonable claim and stretching it to an extreme or distorted version that wasn't actually stated.", "percentage": "5.76%", "examples": [{ "scenario": "Their support of the discussion of sexual orientation issues is dangerous: they advocate for the exposure of children to sexually explicit materials, which is wrong.", "explanation": "This is an example of Fallacy of Extension because it fits the definition: Misrepresenting or exaggerating someone's position to make it easier to attack." }, { "scenario": "They say we should cut back the defense budget. Their position is that they want to leave our nation completely defenseless!", "explanation": "This is an example of Fallacy of Extension because it fits the definition: Misrepresenting or exaggerating someone's position to make it easier to attack." }] },
+            { "id": "false-dilemma", "name": "False Dilemma", "alias": "Either/Or Fallacy", "description": "Presenting a complex situation as having only two extreme options when more possibilities actually exist. This oversimplification forces an artificial either/or choice and ignores middle ground or alternative solutions.", "percentage": "5.76%", "examples": [{ "scenario": "You're either for the war or against the troops.", "explanation": "This is an example of False Dilemma because it fits the definition: Presenting only two options when more actually exist." }, { "scenario": "I don't want to give up my car, so I don't think I can support fighting climate change.", "explanation": "This is an example of False Dilemma because it fits the definition: Presenting only two options when more actually exist." }] },
+            { "id": "fallacy-of-credibility", "name": "Fallacy of Credibility", "alias": "Appeal to False Authority", "description": "Relying on authority figures as evidence in areas outside their actual expertise, or accepting claims uncritically just because they come from someone with credentials. Expertise in one field doesn't guarantee correctness in another.", "percentage": "5.39%", "examples": [{ "scenario": "My professor, who has a Ph.D. in Astronomy, once told me that ghosts are real. Therefore, ghosts are real.", "explanation": "This is an example of Fallacy of Credibility because it fits the definition: Using an authority figure as evidence in an area outside their actual expertise." }, { "scenario": "My minister says the Covid vaccine will cause genetic mutations. He has a college degree, and is a holy man, so he must be right.", "explanation": "This is an example of Fallacy of Credibility because it fits the definition: Using an authority figure as evidence in an area outside their actual expertise." }] },
+            { "id": "equivocation", "name": "Equivocation", "alias": "Word Game", "description": "Using the same word or phrase with different meanings in different parts of an argument, creating confusion that makes faulty reasoning appear valid. This wordplay exploits ambiguity to draw incorrect conclusions.", "percentage": "2.00%", "examples": [{ "scenario": "I don't see how you can say you're an ethical person. It's so hard to get you to do anything: your work ethic is so bad", "explanation": "This is an example of Equivocation because it fits the definition: Using the same word with different meanings in an argument, often to confuse or mislead." }, { "scenario": "It is immoral to kill an innocent human being. Fetuses are innocent human beings. Therefore, it is immoral to kill fetuses.", "explanation": "This is an example of Equivocation because it fits the definition: Using the same word with different meanings in an argument, often to confuse or mislead." }] }
+        ];
+
+        const list = document.querySelector('.fallacy-list');
+        fallacies.forEach((f, i) => {
+            const card = document.createElement('div');
+            card.className = 'fallacy-card';
+            card.innerHTML = `
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:1rem;">
+          <div>
+            <span class="fallacy-title">${f.name}</span>
+            <span class="fallacy-alias">(${f.alias}) ${f.percentage}</span>
+          </div>
+          <button class="dropdown-btn" data-index="${i}">Examples ▼</button>
+        </div>
+        <div class="fallacy-desc">${f.description}</div>
+        <div class="examples-list" id="examples-${i}">
+          ${f.examples.map(ex => `
+            <div class="example-scenario"><b>Scenario:</b> ${ex.scenario}</div>
+            <div class="example-explanation">${ex.explanation}</div>
+          `).join('')}
+        </div>
+      `;
+            list.appendChild(card);
+        });
+
+        // Add impact section
+        const impactSection = document.createElement('div');
+        impactSection.className = 'impact-section';
+        impactSection.innerHTML = `
+            <h2>How It Affects Us</h2>
+            <div class="impact-content">
+                <p>Logical fallacies systematically corrode decision-making and communication. In professional settings, they distort strategic analysis, breed workplace conflict, and reward persuasive manipulation over factual merit, which cripples innovation and trust.</p>
+                <p>In daily life and psychology, they make individuals susceptible to misinformation, fuel social polarization, and erode personal relationships by substituting empathy with adversarial reasoning. This undermines mental frameworks for critical thinking and collective problem-solving.</p>
+                <p>Ultimately, these flawed reasoning patterns compromise societal discourse, facilitate the spread of false narratives, and prevent constructive collaboration on pressing issues, from public health to climate policy. Recognizing them is essential for individual and collective rationality.</p>
+            </div>
+        `;
+        list.appendChild(impactSection);
+
+        // Dropdown logic
+        document.querySelectorAll('.dropdown-btn').forEach(btn => {
+            btn.addEventListener('click', function () {
+                const idx = this.getAttribute('data-index');
+                const el = document.getElementById('examples-' + idx);
+                el.classList.toggle('active');
+                this.textContent = el.classList.contains('active') ? 'Hide Examples ▲' : 'Examples ▼';
+            });
+        });
+    </script>
+    <script src="app.js"></script>
+</body>
+
+</html>
