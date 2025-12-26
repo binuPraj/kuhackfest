@@ -1,5 +1,5 @@
 # ==============================
-# COGNIX Backend Requirements
+# LOGICLENS Backend Requirements
 # ==============================
 
 # Web Framework
@@ -21,3 +21,22 @@ pandas>=2.0.0
 
 # Optional: CUDA support (uncomment if using GPU)
 # torch with CUDA: pip install torch --index-url https://download.pytorch.org/whl/cu118
+
+
+# Model Training Dependencies
+# For Google Colab GPU training
+
+
+
+# Data processing
+
+numpy>=1.24.0
+scikit-learn>=1.3.0
+
+# Transformers extras
+accelerate>=0.25.0
+sentencepiece>=0.1.99
+protobuf>=3.20.0
+
+# Optional: For faster training
+datasets>=2.14.0

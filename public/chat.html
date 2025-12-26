@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>COGNIX | Reasoning Assistant</title>
+    <title>Logic Lens | Reasoning Assistant</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,700;1,700&family=JetBrains+Mono:wght@400;500&display=swap');
@@ -541,13 +541,15 @@
             background: var(--bg-card);
             border: 4px solid var(--text-primary);
             box-shadow: 8px 8px 0 rgba(0, 0, 0, 0.3);
-            padding: 25px;
-            width: 55vw;
-            max-height: 85vh; /* Limit height */
+            padding: 30px;
+            width: 580px;
+            max-width: 90vw;
+            max-height: 85vh;
             display: flex;
             flex-direction: column;
             position: relative;
-            border-radius: 8px;
+            border-radius: 12px;
+            overflow: hidden;
         }
 
         .modal-body {
@@ -656,17 +658,23 @@
             gap: 10px;
         }
 
-        .response-content {
-            /* Content container for smooth transitions */
-        }
+        
 
         .chart-container {
             position: relative;
-            height: 320px;
+            height: 380px;
             width: 100%;
+            max-width: 510px;
+            margin: 0 auto;
+            padding: 10px 20px;
             display: flex;
             justify-content: center;
             align-items: center;
+        }
+
+        .chart-container canvas {
+            max-width: 100%;
+            max-height: 100%;
         }
 
         /* Scrollbar */
@@ -731,7 +739,7 @@
                 style="display:flex; align-items:center; cursor:pointer;">
                 
                 <div class="logo-icon">🔍</div>
-                <div class="logo-text">COGNIX</div>
+                <div class="logo-text">Logic Lens</div>
                 
             </div>
         </a>
@@ -801,7 +809,7 @@
     <div class="main-content">
         <div class="chat-window" id="chat-window">
             <div class="welcome-msg">
-                <h2>Welcome to COGNIX</h2>
+                <h2>Welcome to LOGICLENS</h2>
                 <p>Simply type your argument and submit. I'll provide <strong>both perspectives</strong> in one response:</p>
                 <p>🏗️ <strong>Support Mode:</strong> Toulmin analysis, fallacy detection, and improvement suggestions</p>
                 <p>⚔️ <strong>Defence Mode:</strong> Challenge your reasoning with counter-arguments</p>
@@ -892,17 +900,10 @@
                             <div id="bar-clarity" style="height: 100%; width: 0%; background: #f39c12; transition: width 0.5s ease;"></div>
                         </div>
                     </div>
-
-                    <div id="common-fallacies-container" style="margin-top: 20px; display: none;">
-                        <h4 style="margin-bottom: 10px; color: var(--text-primary); font-size: 0.95rem;">Common Fallacies Faced</h4>
-                        <div id="common-fallacies-list" style="display: flex; flex-wrap: wrap; gap: 8px;">
-                            <!-- Fallacy tags will be injected here -->
-                        </div>
-                    </div>
                 </div>
 
-                 <p style="margin-top: 20px; font-size: 0.8rem; color: var(--text-muted);">
-                    **Key:** The Radar Chart evaluates structural components (0-100). Advanced metrics assess logical validity and presentation based on historical performance.
+                <p style="margin-top: 20px; font-size: 0.8rem; color: var(--text-muted); line-height: 1.5;">
+                    <strong>Key:</strong> The Radar Chart evaluates structural components (0-100). Advanced metrics assess logical validity and presentation based on historical performance.
                 </p>
             </div>
         </div>
@@ -1182,7 +1183,8 @@
                     <strong>Qualifier:</strong> ${supportData.elements?.qualifier?.text || 'N/A'}<br>
                     <strong>Rebuttal:</strong> ${supportData.elements?.rebuttal?.text || 'N/A'}<br><br>
                     <strong>Improved Statement:</strong> ${supportData.improved_statement || 'N/A'}<br>
-                    <strong>Feedback:</strong> ${supportData.feedback || 'No feedback provided.'}
+                    <strong>Feedback:</strong> ${supportData.feedback || 'No feedback provided.'}<br>
+                    ${supportData.insights ? `<br><strong>💡 Insights:</strong> ${supportData.insights}` : ''}
                 `;
             } else {
                 // Defence Mode Content
@@ -1203,7 +1205,7 @@
             
             container.innerHTML = `
                 <div class="response-header">
-                    <div class="message-label">COGNIX • ${isSupport ? 'Support' : 'Defence'} Mode</div>
+                    <div class="message-label">Logic Lens • ${isSupport ? 'Support' : 'Defence'} Mode</div>
                     ${toggleHtml}
                 </div>
                 <div class="response-content">
@@ -1307,21 +1309,6 @@
             document.getElementById('metric-clarity').textContent = Math.round(displayMetrics.clarity) + '%';
             document.getElementById('bar-clarity').style.width = displayMetrics.clarity + '%';
 
-            // Update Common Fallacies
-            const fallaciesContainer = document.getElementById('common-fallacies-container');
-            const fallaciesList = document.getElementById('common-fallacies-list');
-            
-            if (commonFallacies.length > 0) {
-                fallaciesContainer.style.display = 'block';
-                fallaciesList.innerHTML = commonFallacies.map(f => `
-                    <span style="background: rgba(192, 57, 43, 0.1); color: var(--accent-oppose); padding: 4px 10px; border-radius: 12px; font-size: 0.8rem; font-weight: 500;">
-                        ${f.type} (${f.count})
-                    </span>
-                `).join('');
-            } else {
-                fallaciesContainer.style.display = 'none';
-            }
-
             if (chartInstance) {
                 chartInstance.destroy();
             }
@@ -1353,35 +1340,46 @@
                         data: radarData,
                         backgroundColor: 'rgba(30, 132, 73, 0.2)',
                         borderColor: '#1e8449',
-                        borderWidth: 3,
+                        borderWidth: 2,
                         pointBackgroundColor: '#1e8449',
                         pointBorderColor: '#2d2a26',
                         pointBorderWidth: 2,
-                        pointRadius: 6,
-                        pointHoverRadius: 8
+                        pointRadius: 5,
+                        pointHoverRadius: 7
                     }]
                 },
                 options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    layout: {
+                        padding: {
+                            top: 10,
+                            bottom: 10,
+                            left: 10,
+                            right: 10
+                        }
+                    },
                     scales: {
                         r: {
                             min: 0,
-                            max: 100, // Ensure this matches the 0-100 scale
+                            max: 100,
                             beginAtZero: true,
                             angleLines: {
                                 color: '#d5cfc4',
-                                lineWidth: 2
+                                lineWidth: 1
                             },
                             grid: {
                                 color: '#d5cfc4',
-                                lineWidth: 2
+                                lineWidth: 1
                             },
                             pointLabels: {
                                 color: '#2d2a26',
                                 font: {
                                     family: 'Space Grotesk',
-                                    size: 13,
+                                    size: 12,
                                     weight: '600'
-                                }
+                                },
+                                padding: 15
                             },
                             ticks: {
                                 display: false,
@@ -1459,7 +1457,7 @@
             const chatWindow = document.getElementById('chat-window');
             chatWindow.innerHTML = `
                 <div class="welcome-msg">
-                    <h2>Welcome to COGNIX</h2>
+                    <h2>Welcome to Logic Lens</h2>
                     <p>Simply type your argument and submit. I'll provide <strong>both perspectives</strong> in one response:</p>
                     <p>🏗️ <strong>Support Mode:</strong> Toulmin analysis, fallacy detection, and improvement suggestions</p>
                     <p>⚔️ <strong>Defence Mode:</strong> Challenge your reasoning with counter-arguments</p>
@@ -1628,7 +1626,7 @@
                             }
 
                             aiMsg.innerHTML = `
-                                <div class="message-label">COGNIX • Support Mode</div>
+                                <div class="message-label">Logic Lens • Support Mode</div>
                                 <strong>Analysis Complete</strong><br><br>
                                 ${fallaciesHtml}
                                 <strong>Claim:</strong> ${responseData.elements.claim?.text || 'N/A'}<br>
@@ -1638,7 +1636,8 @@
                                 <strong>Qualifier:</strong> ${responseData.elements.qualifier?.text || 'N/A'}<br>
                                 <strong>Rebuttal:</strong> ${responseData.elements.rebuttal?.text || 'N/A'}<br><br>
                                 <strong>Improved Statement:</strong> ${responseData.improved_statement || 'N/A'}<br>
-                                <strong>Feedback:</strong> ${responseData.feedback || 'No feedback provided.'}
+                                <strong>Feedback:</strong> ${responseData.feedback || 'No feedback provided.'}<br>
+                                ${responseData.insights ? `<br><strong>💡 Insights:</strong> ${responseData.insights}` : ''}
                             `;
                             
                             const scores = [
@@ -1657,7 +1656,7 @@
                             };
                         } else {
                             aiMsg.innerHTML = `
-                                <div class="message-label">COGNIX • Support Mode</div>
+                                <div class="message-label">Logic Lens • Support Mode</div>
                                 ${JSON.stringify(responseData)}
                             `;
                         }
@@ -1673,7 +1672,7 @@
                         }
 
                         aiMsg.innerHTML = `
-                            <div class="message-label">COGNIX • Defence Mode</div>
+                            <div class="message-label">Logic Lens • Defence Mode</div>
                             <strong>Challenge Initiated</strong><br><br>
                             ${content}
                         `;

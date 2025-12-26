@@ -77,5 +77,5 @@ test.py
 
 
 #Classification DataSets
-saved_models/
+saved_model_root/
 

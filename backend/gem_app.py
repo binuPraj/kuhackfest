@@ -101,6 +101,7 @@ def recalculate_insights(db_data):
     """
     Recalculate aggregate insights from all arguments across all chats.
     Updates the 'insights' object in db_data with averages.
+    Supports both legacy 'support' mode and new 'dual' mode responses.
     """
     total_fallacy_resistance = 0
     total_logical_consistency = 0
@@ -111,29 +112,43 @@ def recalculate_insights(db_data):
     
     for chat in db_data.get("chats", []):
         for arg in chat.get("arguments", []):
-            if arg.get("mode_used") != "support":
-                continue
-                
+            mode_used = arg.get("mode_used", "")
             response = arg.get("response", {})
+            
             if not response or not isinstance(response, dict):
                 continue
             
-            if "elements" not in response:
+            # Handle dual mode - extract support data from nested structure
+            if mode_used == "dual":
+                support_data = response.get("support", {})
+            elif mode_used == "support":
+                support_data = response
+            else:
+                continue
+            
+            if not support_data or not isinstance(support_data, dict):
+                continue
+            
+            # Check if this has valid support data (elements or scores)
+            has_elements = "elements" in support_data and support_data["elements"]
+            has_scores = "fallacy_resistance_score" in support_data or "logical_consistency_score" in support_data
+            
+            if not has_elements and not has_scores:
                 continue
                 
             support_mode_count += 1
             
-            total_fallacy_resistance += response.get("fallacy_resistance_score", 0)
-            total_logical_consistency += response.get("logical_consistency_score", 0)
-            total_clarity += response.get("clarity_score", 0)
+            total_fallacy_resistance += support_data.get("fallacy_resistance_score", 0)
+            total_logical_consistency += support_data.get("logical_consistency_score", 0)
+            total_clarity += support_data.get("clarity_score", 0)
             
-            elements = response.get("elements", {})
+            elements = support_data.get("elements", {})
             for key in radar_totals:
                 element = elements.get(key, {})
                 if isinstance(element, dict):
                     radar_totals[key] += element.get("strength", 0)
             
-            for fallacy in response.get("fallacies_present", []):
+            for fallacy in support_data.get("fallacies_present", []):
                 fallacy_counts[fallacy] = fallacy_counts.get(fallacy, 0) + 1
     
     if support_mode_count > 0:
@@ -163,6 +178,34 @@ def recalculate_insights(db_data):
 
 
 # ==============================
+# API ROUTE - Recalculate Insights
+# ==============================
+@app.route("/api/recalculate_insights", methods=["GET", "POST"])
+def api_recalculate_insights():
+    """
+    Manually recalculate global insights from all existing arguments.
+    Call this to update insights for existing data.
+    """
+    try:
+        with open(DB_PATH, "r", encoding="utf-8") as f:
+            db_data = json.load(f)
+        
+        db_data = recalculate_insights(db_data)
+        
+        with open(DB_PATH, "w", encoding="utf-8") as f:
+            json.dump(db_data, f, indent=2)
+        
+        return jsonify({
+            "status": "success",
+            "message": "Insights recalculated successfully",
+            "insights": db_data["insights"]
+        })
+    except Exception as e:
+        print(f"❌ Error recalculating insights: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
+# ==============================
 # API ROUTES - Chatbot Endpoints
 # ==============================
 # These routes use core_service.py which is SHARED with the extension.
@@ -172,7 +215,7 @@ def recalculate_insights(db_data):
 def index():
     """Root endpoint - shows API status and available endpoints."""
     return jsonify({
-        "name": "COGNIX - Unified Reasoning Assistant API",
+        "name": "LOGICLENS - Unified Reasoning Assistant API",
         "version": "2.2.0-dual-mode",
         "status": "operational",
         "model": llm_client.model,
@@ -638,7 +681,7 @@ def local_model_status():
 # ==============================
 if __name__ == "__main__":
     print("=" * 60)
-    print("🚀 COGNIX - Unified Reasoning Assistant")
+    print("🚀 LOGICLENS - Unified Reasoning Assistant")
     print("=" * 60)
     print(f"📦 LLM Model: {llm_client.model}")
     print(f"🔬 Local Model: saved_models/electra-logic")

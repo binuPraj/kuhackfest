@@ -36,6 +36,10 @@ let chatHistory = [];        // Message history for the chat panel
 let currentDualResponse = null; // Cached dual-mode response (support + defence)
 let currentDisplayMode = 'support'; // 'support' | 'defence'
 
+// ===== SELECTION ANALYSE BUTTON STATE =====
+let selectionAnalyseButton = null; // Analyse button shown for selected text
+let lastSelectedText = null; // Track the last selected text
+
 // Minimum text length for analysis
 const MIN_TEXT_LENGTH = 20;
 
@@ -76,6 +80,17 @@ function initializeExtension() {
   if (currentMode === 'reading') {
     enableReadingMode();
   }
+  
+  // Listen for text selection - show analyse button
+  document.addEventListener('mouseup', handleTextSelection);
+  document.addEventListener('touchend', handleTextSelection);
+  
+  // Hide analyse button when clicking elsewhere (but not on the button itself)
+  document.addEventListener('mousedown', (e) => {
+    if (selectionAnalyseButton && !selectionAnalyseButton.contains(e.target)) {
+      hideSelectionAnalyseButton();
+    }
+  });
   
   // Listen for messages from background script
   chrome.runtime.onMessage.addListener(handleBackgroundMessage);
@@ -309,6 +324,43 @@ function injectStyles() {
       line-height: 1.6;
       color: var(--reasoning-text-muted, #6b7280);
     }
+
+    /* Selection Analyse Button */
+    .reasoning-selection-analyse-btn {
+      position: absolute !important;
+      padding: 6px 12px !important;
+      background: #c75a2a !important;
+      color: white !important;
+      border: none !important;
+      border-radius: 4px !important;
+      font-size: 12px !important;
+      font-weight: 600 !important;
+      cursor: pointer !important;
+      z-index: 2147483647 !important;
+      box-shadow: 0 2px 8px rgba(199, 90, 42, 0.5) !important;
+      transition: all 0.2s ease !important;
+      white-space: nowrap !important;
+      opacity: 0;
+      transform: scale(0.9);
+      pointer-events: none;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+    }
+
+    .reasoning-selection-analyse-btn.visible {
+      opacity: 1;
+      transform: scale(1);
+      pointer-events: auto;
+    }
+
+    .reasoning-selection-analyse-btn:hover {
+      background: #b8511f !important;
+      box-shadow: 0 3px 12px rgba(199, 90, 42, 0.7) !important;
+      transform: scale(1.05);
+    }
+
+    .reasoning-selection-analyse-btn:active {
+      transform: scale(0.98);
+    }
   `;
   
   document.head.appendChild(style);
@@ -326,8 +378,8 @@ function observeTextFields() {
   const textFields = document.querySelectorAll(selectors.join(', '));
   textFields.forEach(field => {
     // Skip fields inside our floating chatbot
-    if (!field.closest('#cognix-floating-chat-panel') && 
-        !field.closest('.cognix-chat-panel')) {
+    if (!field.closest('#LOGICLENS-floating-chat-panel') && 
+        !field.closest('.LOGICLENS-chat-panel')) {
       attachFieldListeners(field);
     }
   });
@@ -338,10 +390,10 @@ function observeTextFields() {
       mutation.addedNodes.forEach((node) => {
         if (node.nodeType === 1) { // Element node
           // Skip our own chatbot elements
-          if (node.id === 'cognix-floating-chat-panel' || 
-              node.classList?.contains('cognix-chat-panel') ||
-              node.classList?.contains('cognix-floating-icon') ||
-              node.closest?.('#cognix-floating-chat-panel')) {
+          if (node.id === 'LOGICLENS-floating-chat-panel' || 
+              node.classList?.contains('LOGICLENS-chat-panel') ||
+              node.classList?.contains('LOGICLENS-floating-icon') ||
+              node.closest?.('#LOGICLENS-floating-chat-panel')) {
             return;
           }
           
@@ -356,8 +408,8 @@ function observeTextFields() {
           if (node.querySelectorAll) {
             const children = node.querySelectorAll(selectors.join(', '));
             children.forEach(child => {
-              if (!child.closest('#cognix-floating-chat-panel') &&
-                  !child.closest('.cognix-chat-panel')) {
+              if (!child.closest('#LOGICLENS-floating-chat-panel') &&
+                  !child.closest('.LOGICLENS-chat-panel')) {
                 attachFieldListeners(child);
               }
             });
@@ -454,9 +506,9 @@ function attachFieldListeners(field) {
   if (field.dataset.reasoningAssistant) return;
   
   // EXCLUDE floating chatbot's own input field
-  if (field.closest('#cognix-floating-chat-panel') || 
-      field.closest('.cognix-chat-panel') ||
-      field.classList.contains('cognix-chat-input')) {
+  if (field.closest('#LOGICLENS-floating-chat-panel') || 
+      field.closest('.LOGICLENS-chat-panel') ||
+      field.classList.contains('LOGICLENS-chat-input')) {
     return;
   }
   
@@ -1069,7 +1121,7 @@ function createUnifiedViewMoreSection(fallacy_details, fallacies_present, feedba
       // ✅ Add full text detail below the bar
       if (element.text) {
         const detailDiv = document.createElement('div');
-        detailDiv.className = 'cognix-toulmin-detail';
+        detailDiv.className = 'LOGICLENS-toulmin-detail';
         detailDiv.textContent = element.text;
         item.appendChild(detailDiv);
       }
@@ -1908,8 +1960,8 @@ function injectFloatingChatbot() {
   
   // Create floating icon button
   floatingChatbotIcon = document.createElement('div');
-  floatingChatbotIcon.id = 'cognix-floating-chatbot-icon';
-  floatingChatbotIcon.className = 'cognix-floating-icon';
+  floatingChatbotIcon.id = 'LOGICLENS-floating-chatbot-icon';
+  floatingChatbotIcon.className = 'LOGICLENS-floating-icon';
   floatingChatbotIcon.innerHTML = `
     <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C13.33 22 14.6 21.73 15.77 21.24L22 22L20.76 18.23C21.53 16.73 22 15.02 22 13.24C22 7.24 17.52 2 12 2Z" fill="currentColor"/>
@@ -1918,7 +1970,7 @@ function injectFloatingChatbot() {
       <circle cx="16" cy="12" r="1.5" fill="white"/>
     </svg>
   `;
-  floatingChatbotIcon.title = 'COGNIX Chat - Analyze Arguments';
+  floatingChatbotIcon.title = 'Logic Lens Chat - Analyze Arguments';
   
   // Click handler - captures selection and opens chat
   floatingChatbotIcon.addEventListener('click', handleFloatingIconClick);
@@ -1978,7 +2030,7 @@ function handleFloatingIconClick() {
     console.log('📋 Auto-capturing selected text:', selectedText.substring(0, 50) + '...');
     
     // Fill the input with selected text (verbatim, no alteration)
-    const input = floatingChatPanel?.querySelector('.cognix-chat-input');
+    const input = floatingChatPanel?.querySelector('.LOGICLENS-chat-input');
     if (input) {
       input.value = selectedText;
       // Auto-submit after a brief delay for UX
@@ -2001,42 +2053,42 @@ function openChatPanel() {
   
   // Create chat panel
   floatingChatPanel = document.createElement('div');
-  floatingChatPanel.id = 'cognix-floating-chat-panel';
-  floatingChatPanel.className = 'cognix-chat-panel';
+  floatingChatPanel.id = 'LOGICLENS-floating-chat-panel';
+  floatingChatPanel.className = 'LOGICLENS-chat-panel';
   
   floatingChatPanel.innerHTML = `
-    <div class="cognix-chat-header">
-      <div class="cognix-chat-title">
-        <span class="cognix-chat-logo">🧠</span>
-        <span>COGNIX Chat</span>
+    <div class="LOGICLENS-chat-header">
+      <div class="LOGICLENS-chat-title">
+        <span class="LOGICLENS-chat-logo">🧠</span>
+        <span>Logic Lens Chat</span>
       </div>
-      <button class="cognix-chat-close" aria-label="Close chat">×</button>
+      <button class="LOGICLENS-chat-close" aria-label="Close chat">×</button>
     </div>
     
-    <div class="cognix-chat-messages" id="cognix-chat-messages">
-      <div class="cognix-chat-welcome">
+    <div class="LOGICLENS-chat-messages" id="LOGICLENS-chat-messages">
+      <div class="LOGICLENS-chat-welcome">
         <p>👋 Welcome! Paste or type an argument to analyze.</p>
-        <p class="cognix-chat-hint">💡 Tip: Select text on the page and click the chat icon to auto-analyze!</p>
+        <p class="LOGICLENS-chat-hint">💡 Tip: Select text on the page and click the chat icon to auto-analyze!</p>
       </div>
     </div>
     
-    <div class="cognix-chat-input-area">
+    <div class="LOGICLENS-chat-input-area">
       <textarea 
-        class="cognix-chat-input" 
+        class="LOGICLENS-chat-input" 
         placeholder="Type or paste an argument to analyze..."
         rows="2"
       ></textarea>
-      <button class="cognix-chat-send" aria-label="Send">
-        <span class="cognix-send-icon">➤</span>
+      <button class="LOGICLENS-chat-send" aria-label="Send">
+        <span class="LOGICLENS-send-icon">➤</span>
       </button>
     </div>
   `;
   
   // Add event listeners
-  floatingChatPanel.querySelector('.cognix-chat-close').addEventListener('click', closeChatPanel);
+  floatingChatPanel.querySelector('.LOGICLENS-chat-close').addEventListener('click', closeChatPanel);
   
-  const input = floatingChatPanel.querySelector('.cognix-chat-input');
-  const sendBtn = floatingChatPanel.querySelector('.cognix-chat-send');
+  const input = floatingChatPanel.querySelector('.LOGICLENS-chat-input');
+  const sendBtn = floatingChatPanel.querySelector('.LOGICLENS-chat-send');
   
   sendBtn.addEventListener('click', () => {
     const text = input.value.trim();
@@ -2082,14 +2134,14 @@ function closeChatPanel() {
  * Calls the unified dual-mode backend endpoint
  */
 async function submitChatMessage(text) {
-  const messagesContainer = floatingChatPanel?.querySelector('#cognix-chat-messages');
-  const input = floatingChatPanel?.querySelector('.cognix-chat-input');
-  const sendBtn = floatingChatPanel?.querySelector('.cognix-chat-send');
+  const messagesContainer = floatingChatPanel?.querySelector('#LOGICLENS-chat-messages');
+  const input = floatingChatPanel?.querySelector('.LOGICLENS-chat-input');
+  const sendBtn = floatingChatPanel?.querySelector('.LOGICLENS-chat-send');
   
   if (!messagesContainer || !input) return;
   
   // Clear welcome message if present
-  const welcome = messagesContainer.querySelector('.cognix-chat-welcome');
+  const welcome = messagesContainer.querySelector('.LOGICLENS-chat-welcome');
   if (welcome) welcome.remove();
   
   // Add user message
@@ -2149,25 +2201,25 @@ async function submitChatMessage(text) {
  * Add a message to the chat
  */
 function addChatMessage(content, type) {
-  const messagesContainer = floatingChatPanel?.querySelector('#cognix-chat-messages');
+  const messagesContainer = floatingChatPanel?.querySelector('#LOGICLENS-chat-messages');
   if (!messagesContainer) return null;
   
   const messageId = `msg-${Date.now()}`;
   const messageDiv = document.createElement('div');
   messageDiv.id = messageId;
-  messageDiv.className = `cognix-chat-message cognix-chat-${type}`;
+  messageDiv.className = `LOGICLENS-chat-message LOGICLENS-chat-${type}`;
   
   if (type === 'loading') {
     messageDiv.innerHTML = `
-      <div class="cognix-chat-loading">
-        <div class="cognix-chat-spinner"></div>
+      <div class="LOGICLENS-chat-loading">
+        <div class="LOGICLENS-chat-spinner"></div>
         <span>${content}</span>
       </div>
     `;
   } else if (type === 'user') {
-    messageDiv.innerHTML = `<div class="cognix-chat-user-text">${escapeHtml(content)}</div>`;
+    messageDiv.innerHTML = `<div class="LOGICLENS-chat-user-text">${escapeHtml(content)}</div>`;
   } else if (type === 'error') {
-    messageDiv.innerHTML = `<div class="cognix-chat-error-text">⚠️ ${escapeHtml(content)}</div>`;
+    messageDiv.innerHTML = `<div class="LOGICLENS-chat-error-text">⚠️ ${escapeHtml(content)}</div>`;
   }
   
   messagesContainer.appendChild(messageDiv);
@@ -2198,7 +2250,7 @@ function removeChatMessage(messageId) {
  * └──────────────────────────────────────────────────────────────────┘
  */
 function addResponseMessage(dualResponse, mode) {
-  const messagesContainer = floatingChatPanel?.querySelector('#cognix-chat-messages');
+  const messagesContainer = floatingChatPanel?.querySelector('#LOGICLENS-chat-messages');
   if (!messagesContainer) return;
   
   const response = mode === 'support' ? dualResponse.support : dualResponse.defence;
@@ -2206,26 +2258,26 @@ function addResponseMessage(dualResponse, mode) {
   
   const messageDiv = document.createElement('div');
   messageDiv.id = messageId;
-  messageDiv.className = 'cognix-chat-message cognix-chat-response';
+  messageDiv.className = 'LOGICLENS-chat-message LOGICLENS-chat-response';
   messageDiv.dataset.dualResponse = JSON.stringify(dualResponse);
   
   // Build the response content
   messageDiv.innerHTML = `
-    <div class="cognix-chat-mode-toggle">
-      <button class="cognix-mode-btn ${mode === 'support' ? 'active' : ''}" data-mode="support">
+    <div class="LOGICLENS-chat-mode-toggle">
+      <button class="LOGICLENS-mode-btn ${mode === 'support' ? 'active' : ''}" data-mode="support">
         ✅ Support
       </button>
-      <button class="cognix-mode-btn ${mode === 'defence' ? 'active' : ''}" data-mode="defence">
+      <button class="LOGICLENS-mode-btn ${mode === 'defence' ? 'active' : ''}" data-mode="defence">
         ⚔️ Defence
       </button>
     </div>
-    <div class="cognix-chat-response-content">
+    <div class="LOGICLENS-chat-response-content">
       ${renderChatResponse(response, mode)}
     </div>
   `;
   
   // Add mode toggle handlers
-  messageDiv.querySelectorAll('.cognix-mode-btn').forEach(btn => {
+  messageDiv.querySelectorAll('.LOGICLENS-mode-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       const newMode = btn.dataset.mode;
       if (newMode !== currentDisplayMode) {
@@ -2251,12 +2303,12 @@ function updateResponseDisplay(messageDiv, dualResponse, mode) {
   const response = mode === 'support' ? dualResponse.support : dualResponse.defence;
   
   // Update toggle buttons
-  messageDiv.querySelectorAll('.cognix-mode-btn').forEach(btn => {
+  messageDiv.querySelectorAll('.LOGICLENS-mode-btn').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.mode === mode);
   });
   
   // Update content
-  const contentDiv = messageDiv.querySelector('.cognix-chat-response-content');
+  const contentDiv = messageDiv.querySelector('.LOGICLENS-chat-response-content');
   if (contentDiv) {
     contentDiv.innerHTML = renderChatResponse(response, mode);
     // Attach View More toggle handlers
@@ -2268,7 +2320,7 @@ function updateResponseDisplay(messageDiv, dualResponse, mode) {
  * Attach click handlers for View More toggle buttons
  */
 function attachViewMoreHandlers(container) {
-  container.querySelectorAll('.cognix-viewmore-toggle').forEach(toggle => {
+  container.querySelectorAll('.LOGICLENS-viewmore-toggle').forEach(toggle => {
     toggle.addEventListener('click', () => {
       const targetId = toggle.dataset.target;
       const content = document.getElementById(targetId);
@@ -2278,8 +2330,8 @@ function attachViewMoreHandlers(container) {
         content.classList.toggle('expanded');
         
         // Update arrow and text
-        const arrow = toggle.querySelector('.cognix-viewmore-arrow');
-        const text = toggle.querySelector('.cognix-viewmore-text');
+        const arrow = toggle.querySelector('.LOGICLENS-viewmore-arrow');
+        const text = toggle.querySelector('.LOGICLENS-viewmore-text');
         if (arrow) arrow.textContent = isExpanded ? '▼' : '▲';
         if (text) text.textContent = isExpanded ? 'View More' : 'Hide Details';
       }
@@ -2292,11 +2344,11 @@ function attachViewMoreHandlers(container) {
  * Enhanced for better readability in the floating chatbot
  */
 function renderChatResponse(response, mode) {
-  if (!response) return '<p class="cognix-no-response">No response available</p>';
+  if (!response) return '<p class="LOGICLENS-no-response">No response available</p>';
   
   const modeLabel = mode === 'support' ? 'Supporting Analysis' : 'Counter-Argument Analysis';
   
-  let html = `<div class="cognix-response-header-label">${modeLabel}</div>`;
+  let html = `<div class="LOGICLENS-response-header-label">${modeLabel}</div>`;
   
   // For Defence mode, show counter-argument first
   if (mode === 'defence') {
@@ -2350,18 +2402,18 @@ function renderChatResponse(response, mode) {
         .trim();
       
       html += `
-        <div class="cognix-response-block cognix-defence-block">
-          <div class="cognix-block-header">
-            <span class="cognix-block-icon">⚔️</span>
-            <span class="cognix-block-title">Challenge Initiated</span>
+        <div class="LOGICLENS-response-block LOGICLENS-defence-block">
+          <div class="LOGICLENS-block-header">
+            <span class="LOGICLENS-block-icon">⚔️</span>
+            <span class="LOGICLENS-block-title">Challenge Initiated</span>
           </div>
-          <div class="cognix-block-content cognix-counter-text">${escapeHtml(displayText)}</div>
+          <div class="LOGICLENS-block-content LOGICLENS-counter-text">${escapeHtml(displayText)}</div>
         </div>
       `;
     } else {
       html += `
-        <div class="cognix-response-block">
-          <div class="cognix-block-content cognix-no-content">No counter-argument generated.</div>
+        <div class="LOGICLENS-response-block">
+          <div class="LOGICLENS-block-content LOGICLENS-no-content">No counter-argument generated.</div>
         </div>
       `;
     }
@@ -2380,60 +2432,74 @@ function renderChatResponse(response, mode) {
   
   if (improvedStatement) {
     html += `
-      <div class="cognix-response-block cognix-improved-block">
-        <div class="cognix-block-header">
-          <span class="cognix-block-icon">💡</span>
-          <span class="cognix-block-title">Improved Statement</span>
+      <div class="LOGICLENS-response-block LOGICLENS-improved-block">
+        <div class="LOGICLENS-block-header">
+          <span class="LOGICLENS-block-icon">💡</span>
+          <span class="LOGICLENS-block-title">Improved Statement</span>
         </div>
-        <div class="cognix-block-content">${escapeHtml(improvedStatement)}</div>
+        <div class="LOGICLENS-block-content">${escapeHtml(improvedStatement)}</div>
       </div>
     `;
   } else {
     // Fallback: show that no improved statement was generated
     html += `
-      <div class="cognix-response-block cognix-improved-block">
-        <div class="cognix-block-header">
-          <span class="cognix-block-icon">💡</span>
-          <span class="cognix-block-title">Improved Statement</span>
+      <div class="LOGICLENS-response-block LOGICLENS-improved-block">
+        <div class="LOGICLENS-block-header">
+          <span class="LOGICLENS-block-icon">💡</span>
+          <span class="LOGICLENS-block-title">Improved Statement</span>
         </div>
-        <div class="cognix-block-content cognix-no-content">No improved statement generated.</div>
+        <div class="LOGICLENS-block-content LOGICLENS-no-content">No improved statement generated.</div>
       </div>
     `;
   }
   
   // Check if there's any additional content to show
   const hasFeedback = response.feedback;
+  const hasInsights = response.insights;
   const hasFallacies = response.fallacy_details && response.fallacy_details.length > 0;
   const hasToulmin = response.elements && Object.keys(response.elements).length > 0;
-  const hasAdditionalContent = hasFeedback || hasFallacies || hasToulmin;
+  const hasAdditionalContent = hasFeedback || hasInsights || hasFallacies || hasToulmin;
   
   if (hasAdditionalContent) {
     // Unique ID for this collapsible section
-    const collapseId = `cognix-collapse-${Date.now()}`;
+    const collapseId = `LOGICLENS-collapse-${Date.now()}`;
     
     // View More toggle button
     html += `
-      <div class="cognix-viewmore-toggle" data-target="${collapseId}">
-        <div class="cognix-viewmore-label">
-          <span class="cognix-viewmore-icon">📋</span>
-          <span class="cognix-viewmore-text">View More</span>
+      <div class="LOGICLENS-viewmore-toggle" data-target="${collapseId}">
+        <div class="LOGICLENS-viewmore-label">
+          <span class="LOGICLENS-viewmore-icon">📋</span>
+          <span class="LOGICLENS-viewmore-text">View More</span>
         </div>
-        <span class="cognix-viewmore-arrow">▼</span>
+        <span class="LOGICLENS-viewmore-arrow">▼</span>
       </div>
     `;
     
     // Collapsible content container (hidden by default)
-    html += `<div class="cognix-viewmore-content" id="${collapseId}">`;
+    html += `<div class="LOGICLENS-viewmore-content" id="${collapseId}">`;
     
     // Feedback
     if (hasFeedback) {
       html += `
-        <div class="cognix-response-block">
-          <div class="cognix-block-header">
-            <span class="cognix-block-icon">💬</span>
-            <span class="cognix-block-title">Feedback</span>
+        <div class="LOGICLENS-response-block">
+          <div class="LOGICLENS-block-header">
+            <span class="LOGICLENS-block-icon">💬</span>
+            <span class="LOGICLENS-block-title">Feedback</span>
           </div>
-          <div class="cognix-block-content cognix-feedback-text">${escapeHtml(response.feedback)}</div>
+          <div class="LOGICLENS-block-content LOGICLENS-feedback-text">${escapeHtml(response.feedback)}</div>
+        </div>
+      `;
+    }
+    
+    // Insights
+    if (hasInsights) {
+      html += `
+        <div class="LOGICLENS-response-block">
+          <div class="LOGICLENS-block-header">
+            <span class="LOGICLENS-block-icon">💡</span>
+            <span class="LOGICLENS-block-title">Insights</span>
+          </div>
+          <div class="LOGICLENS-block-content LOGICLENS-insights-text">${escapeHtml(response.insights)}</div>
         </div>
       `;
     }
@@ -2441,16 +2507,16 @@ function renderChatResponse(response, mode) {
     // Fallacies (if any detected)
     if (hasFallacies) {
       html += `
-        <div class="cognix-response-block cognix-fallacy-block">
-          <div class="cognix-block-header">
-            <span class="cognix-block-icon">⚠️</span>
-            <span class="cognix-block-title">Detected Fallacies</span>
+        <div class="LOGICLENS-response-block LOGICLENS-fallacy-block">
+          <div class="LOGICLENS-block-header">
+            <span class="LOGICLENS-block-icon">⚠️</span>
+            <span class="LOGICLENS-block-title">Detected Fallacies</span>
           </div>
-          <div class="cognix-fallacy-list">
+          <div class="LOGICLENS-fallacy-list">
             ${response.fallacy_details.map(f => `
-              <div class="cognix-fallacy-item ${getFallacyClass(f.score)}">
-                <span class="cognix-fallacy-name">${escapeHtml(f.label)}</span>
-                <span class="cognix-fallacy-score">${Math.round((f.score || 0) * 100)}%</span>
+              <div class="LOGICLENS-fallacy-item ${getFallacyClass(f.score)}">
+                <span class="LOGICLENS-fallacy-name">${escapeHtml(f.label)}</span>
+                <span class="LOGICLENS-fallacy-score">${Math.round((f.score || 0) * 100)}%</span>
               </div>
             `).join('')}
           </div>
@@ -2461,12 +2527,12 @@ function renderChatResponse(response, mode) {
     // Toulmin Elements (compact visual bars)
     if (hasToulmin) {
       html += `
-        <div class="cognix-response-block cognix-toulmin-block">
-          <div class="cognix-block-header">
-            <span class="cognix-block-icon">📐</span>
-            <span class="cognix-block-title">Argument Structure</span>
+        <div class="LOGICLENS-response-block LOGICLENS-toulmin-block">
+          <div class="LOGICLENS-block-header">
+            <span class="LOGICLENS-block-icon">📐</span>
+            <span class="LOGICLENS-block-title">Argument Structure</span>
           </div>
-          <div class="cognix-toulmin-grid">
+          <div class="LOGICLENS-toulmin-grid">
             ${renderToulminCompact(response.elements)}
           </div>
         </div>
@@ -2510,19 +2576,19 @@ function renderToulminCompact(elements) {
     const text = el.text || 'No details provided';
     
     return `
-      <div class="cognix-toulmin-row">
-        <div class="cognix-toulmin-label-wrap">
-          <span class="cognix-toulmin-icon">${icons[factor]}</span>
-          <span class="cognix-toulmin-name">${labels[factor]}</span>
+      <div class="LOGICLENS-toulmin-row">
+        <div class="LOGICLENS-toulmin-label-wrap">
+          <span class="LOGICLENS-toulmin-icon">${icons[factor]}</span>
+          <span class="LOGICLENS-toulmin-name">${labels[factor]}</span>
         </div>
-        <div class="cognix-toulmin-bar-wrap">
-          <div class="cognix-toulmin-bar">
-            <div class="cognix-toulmin-fill cognix-${scoreClass}" style="width: ${percentage}%"></div>
+        <div class="LOGICLENS-toulmin-bar-wrap">
+          <div class="LOGICLENS-toulmin-bar">
+            <div class="LOGICLENS-toulmin-fill LOGICLENS-${scoreClass}" style="width: ${percentage}%"></div>
           </div>
-          <span class="cognix-toulmin-value">${strength}/10</span>
+          <span class="LOGICLENS-toulmin-value">${strength}/10</span>
         </div>
       </div>
-      <div class="cognix-toulmin-detail">${escapeHtml(text)}</div>
+      <div class="LOGICLENS-toulmin-detail">${escapeHtml(text)}</div>
     `;
   }).join('');
 }
@@ -2610,4 +2676,132 @@ function applyFeatureToggles() {
   }
 }
 
-console.log('🧠 Reasoning Assistant: Content script ready (Grammarly-style manual mode)');
+/**
+ * Handle text selection - show analyse button
+ * This is separate from the floating chatbot button and works for any selected text on the page
+ */
+function handleTextSelection() {
+  // Don't show analyse button if extension or chatbot is disabled
+  if (!isEnabled || !enableChatbot) {
+    hideSelectionAnalyseButton();
+    return;
+  }
+  
+  const selection = window.getSelection();
+  
+  // Check if there's actual text selected
+  if (!selection || selection.toString().trim().length === 0) {
+    hideSelectionAnalyseButton();
+    return;
+  }
+  
+  const selectedText = selection.toString().trim();
+  
+  // Only show if text meets minimum length requirement
+  if (selectedText.length < MIN_TEXT_LENGTH) {
+    hideSelectionAnalyseButton();
+    return;
+  }
+  
+  // Store the selected text
+  lastSelectedText = selectedText;
+  
+  // Get the position of the selection
+  const range = selection.getRangeAt(0);
+  const rect = range.getBoundingClientRect();
+  
+  // Show the analyse button
+  showSelectionAnalyseButton(rect);
+}
+
+/**
+ * Show the analyse button near the selected text
+ */
+function showSelectionAnalyseButton(selectionRect) {
+  // Create button if it doesn't exist
+  if (!selectionAnalyseButton) {
+    selectionAnalyseButton = document.createElement('button');
+    selectionAnalyseButton.className = 'reasoning-selection-analyse-btn';
+    selectionAnalyseButton.textContent = '📋 Analyse';
+    selectionAnalyseButton.addEventListener('click', handleSelectionAnalyseClick);
+    document.body.appendChild(selectionAnalyseButton);
+  }
+  
+  // Position the button using absolute positioning (document coordinates)
+  // Place it above the selection or below if not enough space in viewport
+  let top = selectionRect.top + window.scrollY - 40;
+  let left = selectionRect.left + window.scrollX + (selectionRect.width / 2) - 45; // center above selection
+  
+  // Check if button would go off-screen vertically in current viewport
+  if (selectionRect.top < 50) {
+    // Not enough space above in viewport, place below
+    top = selectionRect.bottom + window.scrollY + 10;
+  }
+  
+  // Clamp horizontal position
+  const minLeft = window.scrollX + 10;
+  const maxLeft = window.scrollX + window.innerWidth - 110;
+  
+  if (left < minLeft) {
+    left = minLeft;
+  } else if (left > maxLeft) {
+    left = maxLeft;
+  }
+  
+  selectionAnalyseButton.style.top = top + 'px';
+  selectionAnalyseButton.style.left = left + 'px';
+  
+  // Show with animation
+  requestAnimationFrame(() => {
+    selectionAnalyseButton.classList.add('visible');
+  });
+}
+
+/**
+ * Hide the analyse button
+ */
+function hideSelectionAnalyseButton() {
+  if (selectionAnalyseButton) {
+    selectionAnalyseButton.classList.remove('visible');
+  }
+}
+
+/**
+ * Handle click on the selection analyse button
+ * Opens the chat panel with the selected text and auto-submits it in support mode
+ */
+function handleSelectionAnalyseClick() {
+  if (!lastSelectedText || lastSelectedText.length === 0) {
+    return;
+  }
+  
+  // Hide the analyse button
+  hideSelectionAnalyseButton();
+  
+  // Ensure the chatbot is injected (in case it wasn't already)
+  if (!floatingChatbotIcon && enableChatbot && isEnabled) {
+    injectFloatingChatbot();
+  }
+  
+  // Open the chat panel
+  openChatPanel();
+  
+  // Auto-fill and auto-submit the selected text
+  console.log('📋 Analyse button: Auto-submitting selected text:', lastSelectedText.substring(0, 50) + '...');
+  
+  // Wait for the panel to be fully rendered and visible
+  setTimeout(() => {
+    const input = floatingChatPanel?.querySelector('.LOGICLENS-chat-input');
+    if (input) {
+      input.value = lastSelectedText;
+      // Trigger input event to notify any listeners
+      input.dispatchEvent(new Event('input', { bubbles: true }));
+      
+      // Auto-submit the message
+      submitChatMessage(lastSelectedText);
+    } else {
+      console.error('❌ Could not find chat input element');
+    }
+  }, 150);
+}
+

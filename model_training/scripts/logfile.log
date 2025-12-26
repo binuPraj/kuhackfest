@@ -1,0 +1,3 @@
+device = cuda
+Namespace(tokenizer='/content/drive/MyDrive/model_training/saved_models/electra-base-mnli', model='/content/drive/MyDrive/model_training/saved_models/electra-base-mnli', weight='12', savepath='/content/drive/MyDrive/model_training/saved_models/electra-logic', finetune='F', savepath2='mnli', map='base', train_strat='1', dev_strat='1', replace_strat='char', replace_count=1, multinli_path='', downsample='F', classwise_savepath=None, result_path=None, do_not_train='F')
+initializing model

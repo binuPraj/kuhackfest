@@ -13,9 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 let currentSettings = {
-  enabled: true,
   mode: 'writing',
-  showSuggestions: true,
   enableDetection: true,    // Real-time text field detection
   enableChatbot: true       // Floating chatbot feature
 };
@@ -37,28 +35,16 @@ async function loadSettings() {
  */
 function updateUI() {
   // Update checkboxes
-  const enableToggle = document.getElementById('enableToggle');
-  const suggestionsToggle = document.getElementById('suggestionsToggle');
   const detectionToggle = document.getElementById('detectionToggle');
   const chatbotToggle = document.getElementById('chatbotToggle');
   
-  enableToggle.checked = currentSettings.enabled;
-  suggestionsToggle.checked = currentSettings.showSuggestions;
   detectionToggle.checked = currentSettings.enableDetection ?? true;
   chatbotToggle.checked = currentSettings.enableChatbot ?? true;
   
   // Update toggle switch visual states
-  const enableSwitch = enableToggle.closest('.toggle-container')?.querySelector('.toggle-switch');
-  const suggestionsSwitch = suggestionsToggle.closest('.toggle-container')?.querySelector('.toggle-switch');
   const detectionSwitch = detectionToggle.closest('.toggle-container')?.querySelector('.toggle-switch');
   const chatbotSwitch = chatbotToggle.closest('.toggle-container')?.querySelector('.toggle-switch');
   
-  if (enableSwitch) {
-    enableSwitch.classList.toggle('active', currentSettings.enabled);
-  }
-  if (suggestionsSwitch) {
-    suggestionsSwitch.classList.toggle('active', currentSettings.showSuggestions);
-  }
   if (detectionSwitch) {
     detectionSwitch.classList.toggle('active', currentSettings.enableDetection ?? true);
   }
@@ -75,28 +61,14 @@ function updateUI() {
   
   // Update status indicator
   const statusDiv = document.getElementById('status');
-  statusDiv.className = currentSettings.enabled ? 'status-badge status-active' : 'status-badge status-inactive';
-  statusDiv.textContent = currentSettings.enabled ? 'Active' : 'Inactive';
+  statusDiv.className = 'status-badge status-active';
+  statusDiv.textContent = 'Active';
 }
 
 /**
  * Attach event listeners to controls
  */
 function attachEventListeners() {
-  // Enable/disable toggle
-  document.getElementById('enableToggle').addEventListener('change', async (e) => {
-    currentSettings.enabled = e.target.checked;
-    await saveSettings();
-    updateUI();
-  });
-  
-  // Suggestions toggle
-  document.getElementById('suggestionsToggle').addEventListener('change', async (e) => {
-    currentSettings.showSuggestions = e.target.checked;
-    await saveSettings();
-    updateUI();
-  });
-  
   // Real-time detection toggle (independent from chatbot)
   document.getElementById('detectionToggle').addEventListener('change', async (e) => {
     currentSettings.enableDetection = e.target.checked;
@@ -109,21 +81,6 @@ function attachEventListeners() {
     currentSettings.enableChatbot = e.target.checked;
     await saveSettings();
     updateUI();
-  });
-  
-  // Test button
-  document.getElementById('testBtn').addEventListener('click', () => {
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-      if (tabs[0]) {
-        chrome.tabs.sendMessage(tabs[0].id, { action: 'testExtension' }, (response) => {
-          if (response && response.success) {
-            showNotification('Extension is working on this page!');
-          } else {
-            showNotification('Extension ready! Start typing in any text field.');
-          }
-        });
-      }
-    });
   });
   
   // Listen for mode updates from content script

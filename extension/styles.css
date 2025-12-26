@@ -1,5 +1,5 @@
 /**
- * Styles for Reasoning Assistant - COGNIX Retro Design
+ * Styles for Reasoning Assistant - LOGICLENS Retro Design
  * 
  * Features:
  * - Warm cream/beige backgrounds
@@ -8,7 +8,7 @@
  * - Elegant, vintage aesthetic
  */
 
-/* ===== CSS VARIABLES - RETRO COGNIX THEME ===== */
+/* ===== CSS VARIABLES - RETRO LOGICLENS THEME ===== */
 :root {
   --reasoning-primary: #c75a2a;
   --reasoning-primary-dark: #a84820;
@@ -1794,10 +1794,10 @@
   }
 }
 
-/* ===== FLOATING CHATBOT STYLES (RETRO COGNIX THEME) ===== */
+/* ===== FLOATING CHATBOT STYLES (RETRO LOGICLENS THEME) ===== */
 
 /* Floating Chat Icon Button */
-.cognix-floating-icon {
+.LOGICLENS-floating-icon {
   position: fixed;
   bottom: 24px;
   right: 24px;
@@ -1816,23 +1816,23 @@
   font-size: 22px;
 }
 
-.cognix-floating-icon:hover {
+.LOGICLENS-floating-icon:hover {
   transform: translateY(-2px) scale(1.05);
   box-shadow: 0 8px 24px rgba(167, 72, 32, 0.55), 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
-.cognix-floating-icon:active {
+.LOGICLENS-floating-icon:active {
   transform: translateY(0) scale(0.98);
 }
 
-.cognix-floating-icon svg {
+.LOGICLENS-floating-icon svg {
   width: 26px;
   height: 26px;
   fill: white;
 }
 
 /* Floating Chat Panel */
-.cognix-chat-panel {
+.LOGICLENS-chat-panel {
   position: fixed;
   bottom: 90px;
   right: 24px;
@@ -1848,11 +1848,11 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  animation: cognixPanelSlideUp 0.3s ease-out;
+  animation: LOGICLENSPanelSlideUp 0.3s ease-out;
   font-family: var(--reasoning-font-sans);
 }
 
-@keyframes cognixPanelSlideUp {
+@keyframes LOGICLENSPanelSlideUp {
   from {
     opacity: 0;
     transform: translateY(20px) scale(0.95);
@@ -1864,7 +1864,7 @@
 }
 
 /* Chat Panel Header */
-.cognix-chat-header {
+.LOGICLENS-chat-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1874,7 +1874,7 @@
   border-bottom: none;
 }
 
-.cognix-chat-title {
+.LOGICLENS-chat-title {
   font-family: var(--reasoning-font);
   font-size: 17px;
   font-weight: 600;
@@ -1884,11 +1884,11 @@
   letter-spacing: 0.3px;
 }
 
-.cognix-chat-title-icon {
+.LOGICLENS-chat-title-icon {
   font-size: 20px;
 }
 
-.cognix-chat-close {
+.LOGICLENS-chat-close {
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 6px;
@@ -1903,13 +1903,13 @@
   transition: all 0.2s;
 }
 
-.cognix-chat-close:hover {
+.LOGICLENS-chat-close:hover {
   background: rgba(255, 255, 255, 0.2);
   color: white;
 }
 
 /* Chat Messages Container */
-.cognix-chat-messages {
+.LOGICLENS-chat-messages {
   flex: 1;
   overflow-y: auto;
   padding: 18px;
@@ -1919,26 +1919,26 @@
   background: #f5f1eb;
 }
 
-.cognix-chat-messages::-webkit-scrollbar {
+.LOGICLENS-chat-messages::-webkit-scrollbar {
   width: 5px;
 }
 
-.cognix-chat-messages::-webkit-scrollbar-track {
+.LOGICLENS-chat-messages::-webkit-scrollbar-track {
   background: #e8e2d8;
   border-radius: 3px;
 }
 
-.cognix-chat-messages::-webkit-scrollbar-thumb {
+.LOGICLENS-chat-messages::-webkit-scrollbar-thumb {
   background: #c9bfb0;
   border-radius: 3px;
 }
 
-.cognix-chat-messages::-webkit-scrollbar-thumb:hover {
+.LOGICLENS-chat-messages::-webkit-scrollbar-thumb:hover {
   background: #b8a898;
 }
 
 /* Individual Chat Message */
-.cognix-chat-message {
+.LOGICLENS-chat-message {
   max-width: 92%;
   padding: 12px 16px;
   border-radius: 14px;
@@ -1947,17 +1947,18 @@
   word-wrap: break-word;
 }
 
-.cognix-chat-message.user {
+.LOGICLENS-chat-message.user {
   align-self: flex-end;
   background: linear-gradient(145deg, #c75a2a 0%, #a84820 100%);
   color: white;
+  font-weight: 700;
   border-bottom-right-radius: 4px;
   box-shadow: 0 2px 8px rgba(167, 72, 32, 0.3);
   border: 1px solid rgba(255, 255, 255, 0.1);
   position: relative;
 }
 
-.cognix-chat-message.user::before {
+.LOGICLENS-chat-message.user::before {
   content: '';
   position: absolute;
   top: -1px;
@@ -1969,7 +1970,7 @@
   pointer-events: none;
 }
 
-.cognix-chat-message.response {
+.LOGICLENS-chat-message.response {
   align-self: flex-start;
   background: #ffffff;
   border: 1px solid #e0d6c8;
@@ -1978,7 +1979,7 @@
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
 }
 
-.cognix-chat-message.loading {
+.LOGICLENS-chat-message.loading {
   align-self: flex-start;
   background: #ffffff;
   border: 1px solid #e0d6c8;
@@ -1989,7 +1990,7 @@
   font-style: italic;
 }
 
-.cognix-chat-message.error {
+.LOGICLENS-chat-message.error {
   align-self: flex-start;
   background: #fef2f2;
   border: 1px solid #fecaca;
@@ -1997,7 +1998,7 @@
 }
 
 /* Loading Spinner in Chat */
-.cognix-chat-spinner {
+.LOGICLENS-chat-spinner {
   width: 18px;
   height: 18px;
   border: 2px solid #e0d6c8;
@@ -2011,7 +2012,7 @@
 }
 
 /* Input Area */
-.cognix-chat-input-area {
+.LOGICLENS-chat-input-area {
   display: flex;
   align-items: flex-end;
   gap: 10px;
@@ -2020,7 +2021,7 @@
   border-top: 1px solid #e0d6c8;
 }
 
-.cognix-chat-input {
+.LOGICLENS-chat-input {
   flex: 1;
   padding: 14px 16px;
   border: 2px solid #d5cfc4;
@@ -2036,19 +2037,19 @@
   transition: all 0.2s ease;
 }
 
-.cognix-chat-input:focus {
+.LOGICLENS-chat-input:focus {
   outline: none;
   border-color: #c75a2a;
   box-shadow: 0 0 0 3px rgba(199, 90, 42, 0.15);
   background: #ffffff;
 }
 
-.cognix-chat-input::placeholder {
+.LOGICLENS-chat-input::placeholder {
   color: #8a8279;
 }
 
 /* Enhanced Send Button */
-.cognix-chat-send {
+.LOGICLENS-chat-send {
   width: 48px;
   height: 48px;
   min-width: 48px;
@@ -2066,23 +2067,23 @@
   box-shadow: 0 3px 12px rgba(167, 72, 32, 0.4);
 }
 
-.cognix-chat-send:hover {
+.LOGICLENS-chat-send:hover {
   transform: translateY(-2px) scale(1.05);
   box-shadow: 0 6px 20px rgba(167, 72, 32, 0.5);
 }
 
-.cognix-chat-send:active {
+.LOGICLENS-chat-send:active {
   transform: translateY(0) scale(0.98);
 }
 
-.cognix-chat-send:disabled {
+.LOGICLENS-chat-send:disabled {
   opacity: 0.4;
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
 }
 
-.cognix-send-icon {
+.LOGICLENS-send-icon {
   font-size: 20px;
   font-weight: bold;
   transform: rotate(-45deg);
@@ -2090,24 +2091,24 @@
 }
 
 /* Welcome message */
-.cognix-chat-welcome {
+.LOGICLENS-chat-welcome {
   text-align: center;
   padding: 32px 20px;
   color: #6b635a;
 }
 
-.cognix-chat-welcome p {
+.LOGICLENS-chat-welcome p {
   margin: 0 0 10px 0;
   font-size: 14px;
   line-height: 1.6;
 }
 
-.cognix-chat-welcome p:first-child {
+.LOGICLENS-chat-welcome p:first-child {
   font-size: 15px;
   color: #2d2a26;
 }
 
-.cognix-chat-hint {
+.LOGICLENS-chat-hint {
   font-size: 12px !important;
   color: #8a8279 !important;
   font-style: italic;
@@ -2119,7 +2120,7 @@
    ═══════════════════════════════════════════════════════════════ */
 
 /* Response message container */
-.cognix-chat-response {
+.LOGICLENS-chat-response {
   max-width: 95% !important;
   padding: 0 !important;
   background: transparent !important;
@@ -2127,13 +2128,13 @@
 }
 
 /* Mode Toggle in Response */
-.cognix-chat-mode-toggle {
+.LOGICLENS-chat-mode-toggle {
   display: flex;
   gap: 8px;
   margin-bottom: 12px;
 }
 
-.cognix-mode-btn {
+.LOGICLENS-mode-btn {
   flex: 1;
   padding: 10px 14px;
   border: 2px solid #d5cfc4;
@@ -2152,13 +2153,13 @@
   gap: 6px;
 }
 
-.cognix-mode-btn:hover {
+.LOGICLENS-mode-btn:hover {
   border-color: #c75a2a;
   background: #fef7f4;
   color: #c75a2a;
 }
 
-.cognix-mode-btn.active {
+.LOGICLENS-mode-btn.active {
   background: linear-gradient(145deg, #c75a2a 0%, #a84820 100%);
   border-color: transparent;
   color: white;
@@ -2166,7 +2167,7 @@
 }
 
 /* Response Content Container */
-.cognix-chat-response-content {
+.LOGICLENS-chat-response-content {
   background: #ffffff;
   border-radius: 14px;
   padding: 16px;
@@ -2175,7 +2176,7 @@
 }
 
 /* Response Header Label */
-.cognix-response-header-label {
+.LOGICLENS-response-header-label {
   font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
@@ -2187,26 +2188,26 @@
 }
 
 /* Response Block (each section) */
-.cognix-response-block {
+.LOGICLENS-response-block {
   margin-bottom: 16px;
 }
 
-.cognix-response-block:last-child {
+.LOGICLENS-response-block:last-child {
   margin-bottom: 0;
 }
 
-.cognix-block-header {
+.LOGICLENS-block-header {
   display: flex;
   align-items: center;
   gap: 8px;
   margin-bottom: 10px;
 }
 
-.cognix-block-icon {
+.LOGICLENS-block-icon {
   font-size: 16px;
 }
 
-.cognix-block-title {
+.LOGICLENS-block-title {
   font-size: 12px;
   font-weight: 700;
   text-transform: uppercase;
@@ -2214,7 +2215,7 @@
   color: #c75a2a;
 }
 
-.cognix-block-content {
+.LOGICLENS-block-content {
   font-size: 14px;
   line-height: 1.65;
   color: #2d2a26;
@@ -2224,24 +2225,24 @@
   border-left: 3px solid #c75a2a;
 }
 
-.cognix-feedback-text {
+.LOGICLENS-feedback-text {
   color: #5c564d;
   font-size: 13px;
   border-left-color: #6a8a9a;
 }
 
 /* Fallacy Block */
-.cognix-fallacy-block .cognix-block-header .cognix-block-title {
+.LOGICLENS-fallacy-block .LOGICLENS-block-header .LOGICLENS-block-title {
   color: #e07a5a;
 }
 
-.cognix-fallacy-list {
+.LOGICLENS-fallacy-list {
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
 
-.cognix-fallacy-item {
+.LOGICLENS-fallacy-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -2251,56 +2252,56 @@
   font-weight: 500;
 }
 
-.cognix-fallacy-item.high {
+.LOGICLENS-fallacy-item.high {
   background: rgba(220, 80, 60, 0.15);
   border: 1px solid rgba(220, 80, 60, 0.3);
 }
 
-.cognix-fallacy-item.medium {
+.LOGICLENS-fallacy-item.medium {
   background: rgba(210, 150, 60, 0.15);
   border: 1px solid rgba(210, 150, 60, 0.3);
 }
 
-.cognix-fallacy-item.low {
+.LOGICLENS-fallacy-item.low {
   background: rgba(100, 170, 100, 0.15);
   border: 1px solid rgba(100, 170, 100, 0.3);
 }
 
-.cognix-fallacy-name {
+.LOGICLENS-fallacy-name {
   color: #2d2a26;
   font-weight: 600;
 }
 
-.cognix-fallacy-score {
+.LOGICLENS-fallacy-score {
   padding: 3px 10px;
   border-radius: 12px;
   font-size: 11px;
   font-weight: 700;
 }
 
-.cognix-fallacy-item.high .cognix-fallacy-score {
+.LOGICLENS-fallacy-item.high .LOGICLENS-fallacy-score {
   background: #dc503c;
   color: white;
 }
 
-.cognix-fallacy-item.medium .cognix-fallacy-score {
+.LOGICLENS-fallacy-item.medium .LOGICLENS-fallacy-score {
   background: #d2963c;
   color: white;
 }
 
-.cognix-fallacy-item.low .cognix-fallacy-score {
+.LOGICLENS-fallacy-item.low .LOGICLENS-fallacy-score {
   background: #64aa64;
   color: white;
 }
 
 /* Defence Block - Enhanced */
-.cognix-defence-block {
+.LOGICLENS-defence-block {
   background: linear-gradient(135deg, #fff5f2 0%, #ffe8e0 100%);
   border: 1px solid #f0ccc0;
   box-shadow: 0 2px 8px rgba(224, 122, 90, 0.15);
 }
 
-.cognix-defence-block .cognix-block-header {
+.LOGICLENS-defence-block .LOGICLENS-block-header {
   background: linear-gradient(135deg, #e07a5a 0%, #c96a4a 100%);
   color: white;
   margin: -12px -12px 12px -12px;
@@ -2308,11 +2309,11 @@
   border-radius: 8px 8px 0 0;
 }
 
-.cognix-defence-block .cognix-block-header .cognix-block-icon {
+.LOGICLENS-defence-block .LOGICLENS-block-header .LOGICLENS-block-icon {
   font-size: 18px;
 }
 
-.cognix-defence-block .cognix-block-header .cognix-block-title {
+.LOGICLENS-defence-block .LOGICLENS-block-header .LOGICLENS-block-title {
   color: white;
   font-weight: 700;
   text-transform: uppercase;
@@ -2320,7 +2321,7 @@
   font-size: 13px;
 }
 
-.cognix-counter-text {
+.LOGICLENS-counter-text {
   background: white;
   border-left: 4px solid #e07a5a !important;
   font-size: 14px;
@@ -2331,24 +2332,24 @@
   font-style: italic;
 }
 
-.cognix-no-content {
+.LOGICLENS-no-content {
   color: #7a756d;
   font-style: italic;
   border-left-color: #5a524a !important;
 }
 
 /* Toulmin Block */
-.cognix-toulmin-block .cognix-block-header .cognix-block-title {
+.LOGICLENS-toulmin-block .LOGICLENS-block-header .LOGICLENS-block-title {
   color: #7aa0b0;
 }
 
-.cognix-toulmin-grid {
+.LOGICLENS-toulmin-grid {
   background: #f8f6f2;
   border-radius: 10px;
   padding: 10px;
 }
 
-.cognix-toulmin-row {
+.LOGICLENS-toulmin-row {
   display: flex;
   align-items: center;
   gap: 10px;
@@ -2357,24 +2358,24 @@
   border-bottom: 1px solid #e8e2d8;
 }
 
-.cognix-toulmin-row:last-child {
+.LOGICLENS-toulmin-row:last-child {
   margin-bottom: 0;
   padding-bottom: 0;
   border-bottom: none;
 }
 
-.cognix-toulmin-label-wrap {
+.LOGICLENS-toulmin-label-wrap {
   display: flex;
   align-items: center;
   gap: 6px;
   min-width: 95px;
 }
 
-.cognix-toulmin-icon {
+.LOGICLENS-toulmin-icon {
   font-size: 14px;
 }
 
-.cognix-toulmin-name {
+.LOGICLENS-toulmin-name {
   font-size: 11px;
   font-weight: 600;
   color: #6b635a;
@@ -2382,14 +2383,14 @@
   letter-spacing: 0.3px;
 }
 
-.cognix-toulmin-bar-wrap {
+.LOGICLENS-toulmin-bar-wrap {
   flex: 1;
   display: flex;
   align-items: center;
   gap: 10px;
 }
 
-.cognix-toulmin-bar {
+.LOGICLENS-toulmin-bar {
   flex: 1;
   height: 8px;
   background: #e0d6c8;
@@ -2397,25 +2398,25 @@
   overflow: hidden;
 }
 
-.cognix-toulmin-fill {
+.LOGICLENS-toulmin-fill {
   height: 100%;
   border-radius: 4px;
   transition: width 0.4s ease;
 }
 
-.cognix-toulmin-fill.cognix-strong {
+.LOGICLENS-toulmin-fill.LOGICLENS-strong {
   background: linear-gradient(90deg, #4a9a6a 0%, #6aba8a 100%);
 }
 
-.cognix-toulmin-fill.cognix-moderate {
+.LOGICLENS-toulmin-fill.LOGICLENS-moderate {
   background: linear-gradient(90deg, #c79a4a 0%, #e0b86a 100%);
 }
 
-.cognix-toulmin-fill.cognix-weak {
+.LOGICLENS-toulmin-fill.LOGICLENS-weak {
   background: linear-gradient(90deg, #c76a5a 0%, #e08a7a 100%);
 }
 
-.cognix-toulmin-value {
+.LOGICLENS-toulmin-value {
   font-size: 12px;
   font-weight: 700;
   color: #2d2a26;
@@ -2424,7 +2425,7 @@
 }
 
 /* Toulmin Detail Text */
-.cognix-toulmin-detail {
+.LOGICLENS-toulmin-detail {
   font-size: 12px;
   line-height: 1.5;
   color: #5c564d;
@@ -2439,7 +2440,7 @@
 }
 
 /* No Response State */
-.cognix-no-response {
+.LOGICLENS-no-response {
   color: #7a756d;
   font-style: italic;
   text-align: center;
@@ -2447,7 +2448,7 @@
 }
 
 /* ===== VIEW MORE TOGGLE (Floating Chatbot) ===== */
-.cognix-viewmore-toggle {
+.LOGICLENS-viewmore-toggle {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -2460,31 +2461,31 @@
   transition: all 0.25s ease;
 }
 
-.cognix-viewmore-toggle:hover {
+.LOGICLENS-viewmore-toggle:hover {
   background: linear-gradient(135deg, #f0ebe3 0%, #e6e1d7 100%);
   border-color: #c9c2b5;
   transform: translateY(-1px);
   box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
 }
 
-.cognix-viewmore-toggle.expanded {
+.LOGICLENS-viewmore-toggle.expanded {
   background: linear-gradient(135deg, #f0ebe3 0%, #e6e1d7 100%);
   border-color: #c75a2a;
   margin-bottom: 0;
   border-radius: 10px 10px 0 0;
 }
 
-.cognix-viewmore-label {
+.LOGICLENS-viewmore-label {
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.cognix-viewmore-icon {
+.LOGICLENS-viewmore-icon {
   font-size: 15px;
 }
 
-.cognix-viewmore-text {
+.LOGICLENS-viewmore-text {
   font-size: 12px;
   font-weight: 600;
   color: #5c564d;
@@ -2492,18 +2493,18 @@
   letter-spacing: 0.5px;
 }
 
-.cognix-viewmore-arrow {
+.LOGICLENS-viewmore-arrow {
   font-size: 11px;
   color: #c75a2a;
   transition: transform 0.3s ease;
 }
 
-.cognix-viewmore-toggle.expanded .cognix-viewmore-arrow {
+.LOGICLENS-viewmore-toggle.expanded .LOGICLENS-viewmore-arrow {
   transform: rotate(180deg);
 }
 
 /* Collapsible Content */
-.cognix-viewmore-content {
+.LOGICLENS-viewmore-content {
   display: none !important;
   padding: 16px 14px;
   background: #f8f6f2;
@@ -2511,14 +2512,14 @@
   border-top: none;
   border-radius: 0 0 10px 10px;
   margin-bottom: 12px;
-  animation: cognix-slideDown 0.25s ease;
+  animation: LOGICLENS-slideDown 0.25s ease;
 }
 
-.cognix-viewmore-content.expanded {
+.LOGICLENS-viewmore-content.expanded {
   display: block !important;
 }
 
-@keyframes cognix-slideDown {
+@keyframes LOGICLENS-slideDown {
   from {
     opacity: 0;
     transform: translateY(-8px);
@@ -2530,26 +2531,26 @@
 }
 
 /* Adjust response blocks inside collapsible */
-.cognix-viewmore-content .cognix-response-block {
+.LOGICLENS-viewmore-content .LOGICLENS-response-block {
   margin-bottom: 14px;
 }
 
-.cognix-viewmore-content .cognix-response-block:last-child {
+.LOGICLENS-viewmore-content .LOGICLENS-response-block:last-child {
   margin-bottom: 0;
 }
 
-.cognix-viewmore-content .cognix-block-content {
+.LOGICLENS-viewmore-content .LOGICLENS-block-content {
   background: #ffffff;
   border-color: #6a8a9a;
 }
 
 /* Improved Statement Block - Always visible */
-.cognix-improved-block {
+.LOGICLENS-improved-block {
   display: block !important;
   margin-bottom: 12px;
 }
 
-.cognix-improved-block .cognix-block-content {
+.LOGICLENS-improved-block .LOGICLENS-block-content {
   background: #f8f6f2;
   border-left: 3px solid #c75a2a;
   font-size: 14px;
@@ -2558,14 +2559,14 @@
 
 /* Responsive Floating Chatbot */
 @media (max-width: 480px) {
-  .cognix-floating-icon {
+  .LOGICLENS-floating-icon {
     width: 48px;
     height: 48px;
     bottom: 16px;
     right: 16px;
   }
   
-  .cognix-chat-panel {
+  .LOGICLENS-chat-panel {
     width: calc(100vw - 24px);
     height: calc(100vh - 100px);
     bottom: 72px;
@@ -2573,40 +2574,40 @@
     border-radius: 12px;
   }
   
-  .cognix-chat-header {
+  .LOGICLENS-chat-header {
     padding: 14px 16px;
   }
   
-  .cognix-chat-title {
+  .LOGICLENS-chat-title {
     font-size: 15px;
   }
   
-  .cognix-chat-messages {
+  .LOGICLENS-chat-messages {
     padding: 12px;
   }
   
-  .cognix-chat-input-area {
+  .LOGICLENS-chat-input-area {
     padding: 12px;
     gap: 8px;
   }
   
-  .cognix-chat-input {
+  .LOGICLENS-chat-input {
     padding: 12px 14px;
     font-size: 13px;
   }
   
-  .cognix-chat-send {
+  .LOGICLENS-chat-send {
     width: 44px;
     height: 44px;
     min-width: 44px;
   }
   
-  .cognix-block-content {
+  .LOGICLENS-block-content {
     font-size: 13px;
     padding: 10px 12px;
   }
   
-  .cognix-toulmin-label-wrap {
+  .LOGICLENS-toulmin-label-wrap {
     min-width: 80px;
   }
 }
