@@ -50,8 +50,11 @@ LogicLens/
 │   └── data/
 │       └── db.json            # Chat history & insights storage
 │
-├── saved_models/               # Local ML Models
-│   └── electra-logic/         # Fine-tuned ELECTRA for fallacy detection
+├── model_training/             # ML Model Training & Inference
+│   ├── saved_models/          # Pre-trained models (download separately)
+│   │   └── electra-base-mnli/ # Fine-tuned ELECTRA for fallacy detection
+│   ├── scripts/               # Training and inference scripts
+│   └── model_training.ipynb   # Training notebook
 │
 └── requirements.txt            # Python dependencies
 ```
@@ -65,7 +68,31 @@ LogicLens/
 - Node.js (optional, for development)
 - Chrome/Edge browser (for extension)
 
-### 1. Backend Setup
+### 1. Download Pre-trained Model Files
+
+**⚠️ Important**: The trained model files are too large for GitHub (417.67 MB). Download them separately:
+
+**📥 Model Download Link**: `https://drive.google.com/drive/folders/1AACi9dOv2P7eJ_Vd_VMEOk1fS2gC9Ozp?fbclid=IwY2xjawO6yJxleHRuA2FlbQIxMABicmlkETE2TlkzQUxLc3NvdjRwOVhOc3J0YwZhcHBfaWQQMjIyMDM5MTc4ODIwMDg5MgABHsv3eldK8huyN496J_YiYwgPDCEUzlgE-aWmXITnp1ybu-5xuUS0TifyXby7_aem_FmFOKjbQ8Qb890MBJkapPA`
+
+After downloading:
+```bash
+# Extract the zip file
+unzip saved_models.zip
+
+# Move to the correct location
+# The structure should be:
+# model_training/
+#   └── saved_models/
+#       └── electra-base-mnli/
+#           ├── model.safetensors (417.67 MB)
+#           ├── config.json
+#           ├── tokenizer.json
+#           ├── tokenizer_config.json
+#           ├── special_tokens_map.json
+#           └── vocab.txt
+```
+
+### 2. Backend Setup
 
 ```bash
 # Clone the repository
@@ -90,14 +117,14 @@ cp .env.example .env
 # Edit .env with your API key (OpenRouter)
 ```
 
-### 2. Configure API Key
+### 3. Configure API Key
 
 Create `backend/.env`:
 ```env
 OPENROUTER_API_KEY=your_openrouter_api_key_here
 ```
 
-### 3. Start the Backend
+### 4. Start the Backend
 
 ```bash
 cd backend
@@ -106,7 +133,7 @@ python gem_app.py
 
 Server runs at: `http://localhost:5001`
 
-### 4. Start the Frontend
+### 5. Start the Frontend
 
 ```bash
 cd public
@@ -115,7 +142,7 @@ python -m http.server 3000
 
 Web app available at: `http://localhost:3000`
 
-### 5. Install Browser Extension
+### 6. Install Browser Extension
 
 1. Open Chrome → `chrome://extensions/`
 2. Enable "Developer mode"
@@ -183,10 +210,34 @@ The local ML model detects 13 types of logical fallacies:
 
 ---
 
+## 📦 Model Information
+
+### ELECTRA Fallacy Detection Model
+- **Base Model**: `google/electra-base-discriminator`
+- **Fine-tuned on**: 4000+ labeled samples across 13 fallacy types
+- **Model Size**: 417.67 MB (model.safetensors)
+- **Location**: `model_training/saved_models/electra-base-mnli/`
+- **Download**: See Quick Start section above
+
+### Required Model Files:
+```
+model_training/saved_models/electra-base-mnli/
+├── model.safetensors      # Main model weights (417.67 MB)
+├── config.json            # Model configuration
+├── tokenizer.json         # Tokenizer vocabulary
+├── tokenizer_config.json  # Tokenizer settings
+├── special_tokens_map.json
+└── vocab.txt
+```
+
+**Note**: These files are NOT included in the Git repository due to size constraints. Download them from the link provided in the Quick Start section.
+
+---
+
 ## 🎨 Tech Stack
 
 - **Backend**: Flask, Python 3.10+
-- **ML Model**: ELECTRA (fine-tuned), PyTorch, Transformers
+- **ML Model**: ELECTRA-base-mnli (fine-tuned), PyTorch, Transformers
 - **LLM**: OpenRouter API (Gemma 3 27B)
 - **Frontend**: Vanilla HTML/CSS/JS, Chart.js
 - **Extension**: Chrome Manifest V3
