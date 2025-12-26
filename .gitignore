@@ -79,3 +79,7 @@ test.py
 #Classification DataSets
 saved_model_root/
 
+# Model files
+*.safetensors
+*.bin
+model_training/saved_models/
